@@ -10,3 +10,16 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# scripts
+script/*
+
+# dep related
+vendor/*
+
+# sample config files
+config/*.toml
+
+# compiled executable
+Stockbinator
+
