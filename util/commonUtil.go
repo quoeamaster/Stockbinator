@@ -18,9 +18,11 @@ package util
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 )
 
@@ -93,7 +95,12 @@ func ConcatenateFilePath(paths ...string) (finalPath string) {
 // extract the final sub-path of the given path; the separator is based on the OS's path separator
 func GetLastPathElement(finalPath string) (string, error) {
 	if len(finalPath) > 0 {
-		parts := strings.Split(finalPath, GetPathSeparator())
+		var parts []string
+		if strings.HasSuffix(finalPath, GetPathSeparator()) {
+			parts = strings.Split(finalPath[0: len(finalPath)-1], GetPathSeparator())
+		} else {
+			parts = strings.Split(finalPath, GetPathSeparator())
+		}
 		partsLen := len(parts)
 		if partsLen > 0 {
 			return parts[partsLen - 1], nil
@@ -107,6 +114,59 @@ func GetLastPathElement(finalPath string) (string, error) {
 	}
 }
 
+
+// validates if the given time part is valid (e.g. hour24 = 0~23, min = 0~59, sec = 0~59)
+func IsValidTimePart(value int, partName string) (valid bool) {
+	valid = true
+
+	if value >= 0 {
+		switch partName {
+		case "hour24":
+			if value > 23 {
+				valid = false
+			}
+			break
+		case "min":
+		case "sec":
+			if value > 59 {
+				valid = false
+			}
+			break
+		default:
+			// unsupported time parts...
+			valid = false
+		}
+	} else {
+		valid = false
+	}
+	return
+}
+
+
+var timezoneRegexp = regexp.MustCompile(`[+-]?[0-1]?[0-9]:[0-3]0`)
+
+// method to check if the given string is a valid timezone format =>
+// 1) +08:00 OR
+// 2) +8:00 OR
+// 3) -07:00
+func IsValidTimezone(value string) (valid bool) {
+	return timezoneRegexp.MatchString(value)
+}
+
+
+// method to parse and return the request body contents in []byte
+func GetRequestBodyInBytes(pBody *io.ReadCloser) (bContent []byte, err error) {
+	bContent, err = ioutil.ReadAll(*pBody)
+	return
+}
+
+// method to check if the supplied string is empty or not
+func IsEmptyString(value string) bool {
+	if strings.Compare(strings.Trim(value, " "), "") == 0 {
+		return true
+	}
+	return false
+}
 
 // TODO ...
 // parse string to Date object...

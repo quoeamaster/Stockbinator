@@ -19,6 +19,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:69e7139f6d546cc6ffc9ca98e7f4cfe95be479f4044eb30bb92017b5b87c9d40"
+  name = "github.com/buger/jsonparser"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bf1c66bbce23153d89b23f8960071a680dbef54b"
+
+[[projects]]
+  branch = "master"
   digest = "1:43e9da6dbc3acc075e7d3b922d0b2c93be6c3e4fbec3ce5562fdce18d98dee13"
   name = "github.com/daviddengcn/go-colortext"
   packages = [
@@ -148,6 +156,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/buger/jsonparser",
     "github.com/daviddengcn/go-colortext",
     "github.com/daviddengcn/go-colortext/fmt",
     "github.com/emicklei/go-restful",

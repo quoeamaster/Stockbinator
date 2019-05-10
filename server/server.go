@@ -17,6 +17,7 @@ package server
 
 import (
 	"Stockbinator/config"
+	"Stockbinator/webservice"
 	"fmt"
 	"github.com/daviddengcn/go-colortext"
 	"github.com/daviddengcn/go-colortext/fmt"
@@ -30,12 +31,36 @@ const moduleServer = "server."
 type Server struct {
 	// server config
 	pCfg *config.StructConfig
+	// Cron service
+	pCronSrv *webservice.StructCron
 }
 
 
 // load server and stock module config(s)
 func (s *Server) loadConfig() (err error) {
 	s.pCfg, err = config.NewStructConfig()
+	return
+}
+
+// TODO
+func (s *Server) setupCrons() (err error) {
+	// get back all stock_module's rules' collection time
+	for _, stockModuleObj := range s.pCfg.ModuleConfigs {
+		fmt.Println(stockModuleObj.Name, "%%%")
+		mapToplevelRules := stockModuleObj.Rules.Map()
+		for keySub, ruleVal := range mapToplevelRules {
+			mapSubRules := ruleVal.(map[string]interface{})
+			collectTime := mapSubRules["collect_time"].(string)
+			// direct call the api and not through http
+			// e.g. 21:00T+08:00 => hour24:21, min:00, sec:00, timezone:+08:00, stockModuleRule:
+			ruleKey := fmt.Sprintf("%v.%v", stockModuleObj.Name, keySub)
+
+			// TODO break the 21:00T+08:00 into hour24, min, sec, timezone....
+
+			fmt.Println(ruleKey, " ", collectTime)
+		}
+	}
+
 	return
 }
 
@@ -51,6 +76,11 @@ func (s *Server) Start() (err error) {
 	if err != nil {
 		return
 	}
+	// setup cron(s)
+	err = s.setupCrons()
+	if err != nil {
+		return
+	}
 	// start Http service
 	s.logInfo("Start", "server started at port => 9000")
 	err = http.ListenAndServe(":9000", nil)
@@ -59,7 +89,7 @@ func (s *Server) Start() (err error) {
 }
 
 func (s *Server) loadWebServices() (err error) {
-	// add webService module
+	// add webService module (dummy tester)
 	pWs := new(restful.WebService)
 	pWs.Path("/").
 		Consumes(restful.MIME_JSON).
@@ -68,6 +98,10 @@ func (s *Server) loadWebServices() (err error) {
 	pWs.Route(pWs.GET("").To(s.welcomeFunc))
 
 	restful.DefaultContainer.Add(pWs)
+
+	// load CronService module
+	s.pCronSrv = webservice.NewStructCron()
+	restful.DefaultContainer.Add(s.pCronSrv.CreateWebservice())
 
 	return
 }
