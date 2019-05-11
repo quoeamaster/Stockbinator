@@ -18,11 +18,14 @@ package server
 import (
 	"Stockbinator/config"
 	"Stockbinator/webservice"
+	"errors"
 	"fmt"
 	"github.com/daviddengcn/go-colortext"
 	"github.com/daviddengcn/go-colortext/fmt"
 	"github.com/emicklei/go-restful"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 const moduleServer = "server."
@@ -42,24 +45,59 @@ func (s *Server) loadConfig() (err error) {
 	return
 }
 
-// TODO
+// setup the initial cron schedules based on the stock-module's config(s)
 func (s *Server) setupCrons() (err error) {
 	// get back all stock_module's rules' collection time
 	for _, stockModuleObj := range s.pCfg.ModuleConfigs {
-		fmt.Println(stockModuleObj.Name, "%%%")
 		mapToplevelRules := stockModuleObj.Rules.Map()
 		for keySub, ruleVal := range mapToplevelRules {
 			mapSubRules := ruleVal.(map[string]interface{})
 			collectTime := mapSubRules["collect_time"].(string)
 			// direct call the api and not through http
-			// e.g. 21:00T+08:00 => hour24:21, min:00, sec:00, timezone:+08:00, stockModuleRule:
 			ruleKey := fmt.Sprintf("%v.%v", stockModuleObj.Name, keySub)
+			//fmt.Println(ruleKey, " ", collectTime)
 
-			// TODO break the 21:00T+08:00 into hour24, min, sec, timezone....
+			// e.g. 21:00T+08:00 => hour24:21, min:00, sec:00, timezone:+08:00, stockModuleRule:
+			// break the 21:00T+08:00 into hour24, min, sec, timezone....
+			hour24, min, sec, timezone, err := s.prepareCronScheduleParams(collectTime)
+			if err != nil {
+				panic(err)
+			}
+			_, err = s.pCronSrv.UpsertTimeCron(hour24, min, sec, timezone, ruleKey)
+			if err != nil {
+				panic(err)
+			}
+		}	// end -- for (sub level rule values e.g. [007_tencet][collect_time])
+	}	// end -- for (top level rule values e.g. [stockmodule_aastocks])
+	return
+}
 
-			fmt.Println(ruleKey, " ", collectTime)
-		}
+// method to break the 21:00T+08:00 into hour24, min, sec, timezone....
+// since this parsing is application dependant, hence not available under the commonUtil.go
+func (s *Server) prepareCronScheduleParams(cronVal string) (hours24, min, sec int, timezone string, err error) {
+	topParts := strings.Split(cronVal, "T")
+	if len(topParts) != 2 {
+		err = errors.New(fmt.Sprintf("exception! Invalid cron value => %v, exepcted cron value is [21:00T+07:00]", cronVal))
+		return
 	}
+	// time parts
+	timeParts := strings.Split(topParts[0], ":")
+	if len(timeParts) != 2 {
+		err = errors.New(fmt.Sprintf("exception! Invalid time value => %v, exepcted time value is [21:00]", topParts[0]))
+		return
+	}
+	hours24, err = strconv.Atoi(timeParts[0])
+	if err != nil {
+		return
+	}
+	min, err = strconv.Atoi(timeParts[1])
+	if err != nil {
+		return
+	}
+	sec = 0
+	// timezone
+	// regexp check??? (ignore for now)
+	timezone = topParts[1]
 
 	return
 }

@@ -51,6 +51,7 @@ func (c *StructCron) UpsertTimeCron( hour24, min, sec int, timezone, stocksModul
 		!util.IsEmptyString(stocksModuleRule) {
 		valid = true
 	}
+	//fmt.Println("** heya => ", hour24, " ", min, " ", sec, " ", timezone, " ", stocksModuleRule)
 	// by default, it should be just update on the cron; unless the entry doesn't exists
 	inserted = false
 	if valid == false {
@@ -59,7 +60,11 @@ time-cron entry => hour24[%v], min[%v], sec[%v],
 timezone[%v], stockModuleRule[%v]`, hour24, min, sec, timezone, stocksModuleRule))
 	} else {
 		// add / update the cron
-// TODO
+// TODO create a data structue to encapsulate the cron schedules
+//  etc... map[string][]StructCronEntry;
+//   string(key) = hour24:min:sec
+//   StructCronEntry contains the stocksModuleRule => can look up the rule(s)
+//    for scrapping etc (e.g. url, rule_price)
 	}
 	return
 }
