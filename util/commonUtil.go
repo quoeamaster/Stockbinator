@@ -24,9 +24,12 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"time"
 )
 
 const DefaultConfigValString = "NIL"
+// common date format for parsing => yyyy-MM-ddThh:mm:ss-07:00
+const CommonDateFormat = "2006-01-02T15:04:05-07:00"
 
 // return the path separator based on current OS
 func GetPathSeparator() string {
@@ -170,3 +173,64 @@ func IsEmptyString(value string) bool {
 
 // TODO ...
 // parse string to Date object...
+
+// 2019-05-28T07:30:00+0000
+func CreateTodayTargetTimeByHourMinTimezone(hour, min int, timezone string) (todayTargetTime string) {
+	// skip validation as assume isValidTimePart() has been called earlier
+	bToday := ""
+	now := time.Now()
+	bToday = fmt.Sprintf("%v-", now.Year())
+
+	dPart := int64(now.Month())
+	if dPart < 10 {
+		//bToday.WriteString(fmt.Sprintf("0%v-", dPart))
+		bToday = fmt.Sprintf("%v0%v-", bToday, dPart)
+	} else {
+		//bToday.WriteString(fmt.Sprintf("%v-", dPart))
+		bToday = fmt.Sprintf("%v%v-", bToday, dPart)
+	}
+
+	dPart2 := now.Day()
+	if dPart2 < 10 {
+		bToday = fmt.Sprintf("%v0%vT", bToday, dPart2)
+	} else {
+		bToday = fmt.Sprintf("%v%vT", bToday, dPart2)
+	}
+
+	// TODO: hh:mm:ssTZ
+	if hour < 10 {
+		bToday = fmt.Sprintf("%v0%v:", bToday, hour)
+		//bToday.WriteString(fmt.Sprintf("0%v:", hour))
+	} else {
+		bToday = fmt.Sprintf("%v%v:", bToday, hour)
+	}
+
+	if min < 10 {
+		bToday = fmt.Sprintf("%v0%v:", bToday, min)
+		//bToday.WriteString(fmt.Sprintf("0%v:", min))
+	} else {
+		bToday = fmt.Sprintf("%v%v:", bToday, min)
+	}
+	bToday = fmt.Sprintf("%v00%v", bToday, timezone)
+
+	return bToday
+}
+
+
+// helper method to create the date-time based on today's date associated with
+// the hours plus minutes plus timezone provided
+func ParseStringDateToTodayUTC(hh24, mm int, timezone string) (pDate time.Time, err error) {
+	sDate := CreateTodayTargetTimeByHourMinTimezone(hh24, mm, timezone)
+
+	pDate, err = time.Parse(CommonDateFormat, sDate)
+	pDate = pDate.In(time.UTC)
+
+	return
+}
+
+
+func ParseStringToDateAndUTC(date string) (givenDateInStr, utcDateInStr string, err error) {
+
+
+	return
+}

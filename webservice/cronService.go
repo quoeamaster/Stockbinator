@@ -16,6 +16,7 @@
 package webservice
 
 import (
+	"Stockbinator/config"
 	"Stockbinator/util"
 	"bytes"
 	"errors"
@@ -23,21 +24,46 @@ import (
 	"github.com/daviddengcn/go-colortext"
 	"github.com/daviddengcn/go-colortext/fmt"
 	"github.com/emicklei/go-restful"
-	"strings"
 	"time"
 )
 
 const moduleWSCron = "cronService"
+// the time / date layout
+const cronTimeLayout = "2006-01-02T15:04:05-0700"
 
 type StructCron struct {
 	// instance of the jsonParser for this webservice module
 	pJsonParser *util.StructJsonParser
+	// map of StructCronEntry entries; each of these represent a time for running a crawler job
+	cronTimeEntries map[string]*StructCronEntry
+	// the config information for the crawler job
+	pCfg *config.StructConfig
 }
 
 // creation method for StructCron
-func NewStructCron() (cron *StructCron) {
+func NewStructCron(pCfg *config.StructConfig) (cron *StructCron) {
 	cron = new(StructCron)
 	cron.pJsonParser = util.NewStructJsonParser()
+	cron.cronTimeEntries = make(map[string]*StructCronEntry)
+	cron.pCfg = pCfg
+	return
+}
+
+// structure contains the display-name of the cron-time entry;
+// plus a UTC converted time object,
+// finally a list of stocks-module-rule(s) associated
+type StructCronEntry struct {
+	// display name for the cron-time; it could be in any timezone
+	DisplayName string
+	// UTC converted time / date
+	UTCTime time.Time
+	// list of stocksModuleRule under this cron-time entry (usually size of 1)
+	StocksModuleRuleList []string
+}
+
+func NewStructCronEntry() (entry *StructCronEntry) {
+	entry = new(StructCronEntry)
+	entry.StocksModuleRuleList = make([]string, 0)
 	return
 }
 
@@ -67,6 +93,28 @@ timezone[%v], stockModuleRule[%v]`, hour24, min, sec, timezone, stocksModuleRule
 //   string(key) = hour24:min:sec
 //   StructCronEntry contains the stocksModuleRule => can look up the rule(s)
 //    for scrapping etc (e.g. url, rule_price)
+		// a) prepare the cron-time for today
+		cronTime := util.CreateTodayTargetTimeByHourMinTimezone(hour24, min, timezone)
+
+		// b) check if the entry is already there or not
+		if c.cronTimeEntries[cronTime] != nil {
+			// means existed
+			pEntry := c.cronTimeEntries[cronTime]
+			pEntry.StocksModuleRuleList = append(pEntry.StocksModuleRuleList, stocksModuleRule)
+
+		} else {
+			// create a new entry
+			pDate, err2 := util.ParseStringDateToTodayUTC(hour24, min, timezone)
+			if err2 != nil {
+				return
+			} else {
+				pEntry := NewStructCronEntry()
+				pEntry.DisplayName = cronTime
+				pEntry.UTCTime = pDate
+				pEntry.StocksModuleRuleList = append(pEntry.StocksModuleRuleList, stocksModuleRule)
+				c.cronTimeEntries[cronTime] = pEntry
+			}
+		} // end -- if (cronTimeEntries exists check)
 	}
 	return
 }
@@ -176,70 +224,8 @@ hour24 (default 0), min (default 0), sec (default 0), timezone (default "+00:00"
 }
 
 func (c *StructCron) listTimeCronAPI(pReq *restful.Request, pRes *restful.Response) {
-	now := time.Now()
-	tzName, tzOffsetInMin := now.Zone()
-	// can construct a new Time... based on data parts
-	now = time.Date(now.Year(), now.Month(), now.Day(), 11, 30, 00, 00, now.Location())
-
-	// use Parse
-	tFormat := "2006-01-02 15:04:05 MST"
-	// tFormat = "2006-01-02T15:04:05-07:00"
-	utcLoc, err := time.LoadLocation("UTC")
-
-	// TODO: use this logic...
-	// a) format a current-time
-	utcFormatTime := now.Format(tFormat)
-	fmt.Println(utcFormatTime)
-	// b) form back into a Time object
-	utcTime, err := time.Parse(tFormat, utcFormatTime)
-	fmt.Println(utcTime)
-	// c) convert to UTC
-	utcTime = utcTime.In(utcLoc)
-	fmt.Println(utcTime)
-
-	// TODO: try another approach (every sec parse the targeted cronTime... not efficient)
-	fmt.Println("")
-	gmtTimeObj, err := time.Parse("2006-01-02T15:04:05-0700", "2019-05-19T15:30:00+0800")
-	tzName, _ = gmtTimeObj.Zone()
-	fmt.Println(gmtTimeObj)
-	//fmt.Println(tzName)
-	//fmt.Println(gmtTimeObj.Local())
-
-	utcTimeObj := gmtTimeObj.In(utcLoc)
-	tzName, _ = utcTimeObj.Zone()
-	fmt.Println(utcTimeObj)
-	//fmt.Println(tzName)
-	//fmt.Println(utcTimeObj.Local())
-
-	// TODO: another approach (1. create cronTime in UTC format {string} - conversion, 2. convert now to utc {string}, 3. compare the values)
-	// RECOMMENDED
-	fmt.Println("\nutc string comparison")
-	fmt.Println("a) target cronTime converted to UTC {string} once : need to update every midnight")
-	// create everyday just after midnight... etc
-	gmtTimeObj, err = time.Parse("2006-01-02T15:04:05-0700", "2019-05-28T15:30:00+0800")
-	strGmtTime := gmtTimeObj.In(time.UTC).Format("2006-01-02T15:04:05-0700")
-	fmt.Println("a => ", strGmtTime)
-	fmt.Println("b) convert current time to utc as well")
-	strUtcTime := time.Now().In(time.UTC).Format("2006-01-02T15:04:05-0700")
-	fmt.Println("b => ", strUtcTime)
-	fmt.Println("c) compare timestamp")
-	fmt.Println(strings.Compare(strGmtTime, strUtcTime))
-
-
-
-
-
-
-
-
-
-
-	//utcTime, err := time.ParseInLocation(tFormat, "2019-05-14T15:30:00+08:00", utcLoc)
-	//utcTime = now.In(utcLoc)
-
-
 // TODO do xxx to UTC conversion here
-	err = pRes.WriteAsJson(fmt.Sprintf("current time: %v, timezone: %v, diff in min: %v; utc time => %v\n", now, tzName, tzOffsetInMin, utcTime))
+	err := pRes.WriteAsJson(c.cronTimeEntries)
 	if err != nil {
 		// just log and continue to serve (sometimes it is a disconnection which could be re-covered)
 		c.logError("listTimeCronAPI", err.Error())

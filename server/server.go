@@ -138,7 +138,7 @@ func (s *Server) loadWebServices() (err error) {
 	restful.DefaultContainer.Add(pWs)
 
 	// load CronService module
-	s.pCronSrv = webservice.NewStructCron()
+	s.pCronSrv = webservice.NewStructCron(s.pCfg)
 	restful.DefaultContainer.Add(s.pCronSrv.CreateWebservice())
 
 	return
