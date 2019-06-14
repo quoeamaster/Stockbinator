@@ -42,7 +42,10 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 	names := strings.Split(moduleKey, ".")
 	if names != nil && len(names) == 2 {
 		stockModuleConfig := s.StockModuleConfig[names[0]]
-		// download the html content for crawl / scrap
+// TODO: also check if today is a holiday based on the rule-config
+// stockModuleConfig.Holidays
+fmt.Println(stockModuleConfig.Holidays.Map())
+
 		ruleConfig := stockModuleConfig.Rules
 		url := ruleConfig.Get(names[1], ruleUrl).String(valueUnknown)
 		if strings.Compare(url, valueUnknown) == 0 {

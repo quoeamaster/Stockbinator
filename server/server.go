@@ -119,6 +119,12 @@ func (s *Server) Start() (err error) {
 	if err != nil {
 		return
 	}
+	// kick start cron ticker loop
+	err = s.pCronSrv.RunCron()
+	if err != nil {
+		return
+	}
+
 	// start Http service
 	s.logInfo("Start", "server started at port => 9000")
 	err = http.ListenAndServe(":9000", nil)

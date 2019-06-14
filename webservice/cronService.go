@@ -17,6 +17,7 @@ package webservice
 
 import (
 	"Stockbinator/config"
+	"Stockbinator/crawler"
 	"Stockbinator/util"
 	"bytes"
 	"errors"
@@ -24,13 +25,12 @@ import (
 	"github.com/daviddengcn/go-colortext"
 	"github.com/daviddengcn/go-colortext/fmt"
 	"github.com/emicklei/go-restful"
-	"reflect"
 	"time"
 )
 
 const moduleWSCron = "cronService"
 // the time / date layout
-const cronTimeLayout = "2006-01-02T15:04:05-0700"
+//const cronTimeLayout = "2006-01-02T15:04:05-0700"
 
 type StructCron struct {
 	// instance of the jsonParser for this webservice module
@@ -39,6 +39,11 @@ type StructCron struct {
 	cronTimeEntries map[string]*StructCronEntry
 	// the config information for the crawler job
 	pCfg *config.StructConfig
+
+	// the ticker for the cron service
+	pTickerCron *time.Ticker
+	// is the tick loop running?
+	isCronTickRunning bool
 }
 
 // creation method for StructCron
@@ -47,6 +52,7 @@ func NewStructCron(pCfg *config.StructConfig) (cron *StructCron) {
 	cron.pJsonParser = util.NewStructJsonParser()
 	cron.cronTimeEntries = make(map[string]*StructCronEntry)
 	cron.pCfg = pCfg
+	cron.isCronTickRunning = false
 	return
 }
 
@@ -60,11 +66,14 @@ type StructCronEntry struct {
 	UTCTime time.Time
 	// list of stocksModuleRule under this cron-time entry (usually size of 1)
 	StocksModuleRuleList []string
+	// boolean indicates whether the underlying cron-job is running
+	isJobRunning bool
 }
 
 func NewStructCronEntry() (entry *StructCronEntry) {
 	entry = new(StructCronEntry)
 	entry.StocksModuleRuleList = make([]string, 0)
+	entry.isJobRunning = false
 	return
 }
 
@@ -89,11 +98,6 @@ time-cron entry => hour24[%v], min[%v], sec[%v],
 timezone[%v], stockModuleRule[%v]`, hour24, min, sec, timezone, stocksModuleRule))
 	} else {
 		// add / update the cron
-// TODO create a data structue to encapsulate the cron schedules
-//  etc... map[string][]StructCronEntry;
-//   string(key) = hour24:min:sec
-//   StructCronEntry contains the stocksModuleRule => can look up the rule(s)
-//    for scrapping etc (e.g. url, rule_price)
 		// a) prepare the cron-time for today
 		cronDisplayTime := util.CreateTodayTargetTimeByHourMinTimezone(hour24, min, timezone)
 		pCronTimeUTC, err2 := util.ParseStringDateToTodayUTC(hour24, min, timezone)
@@ -233,10 +237,10 @@ hour24 (default 0), min (default 0), sec (default 0), timezone (default "+00:00"
 }
 
 func (c *StructCron) listTimeCronAPI(pReq *restful.Request, pRes *restful.Response) {
-	cfg := c.pCfg.ModuleConfigs["stock_aastocks"]
-	tencent := cfg.Rules.Get("700_tencent", "rule_pe").String("no_idea")
-	fmt.Printf("%v - %v\n", reflect.TypeOf(tencent), tencent)
-
+	// for testing only...
+	// cfg := c.pCfg.ModuleConfigs["stock_aastocks"]
+	// tencent := cfg.Rules.Get("700_tencent", "url").String("no_idea")
+	// fmt.Printf("%v - %v\n", reflect.TypeOf(tencent), tencent)
 
 	err := pRes.WriteAsJson(c.cronTimeEntries)
 	if err != nil {
@@ -246,6 +250,56 @@ func (c *StructCron) listTimeCronAPI(pReq *restful.Request, pRes *restful.Respon
 }
 
 
+// * ******************************* *
+// * non web-service related methods *
+// * ******************************* *
+
+// start the cron ticker loop if it was not started yet
+func (c *StructCron) RunCron() (err error)  {
+	// only start the tick loop if not yet running
+	if !c.isCronTickRunning {
+		c.isCronTickRunning = true
+
+		// per minute ticker... and start running ticks at once
+		c.pTickerCron = time.NewTicker(time.Minute)
+		// start a routine
+		go func() {
+			for currentTime := range c.pTickerCron.C {
+				// check if the current-time matches any of the cron-time entries
+				// currentTimeUTC := currentTime.In(time.UTC).Format(util.CommonDateFormat)
+				// fmt.Println(currentTimeUTC)
+				currentTimeUTC := currentTime.In(time.UTC)
+				for _, cronTimeEntry := range c.cronTimeEntries {
+					if !cronTimeEntry.isJobRunning {
+						if currentTimeUTC.Equal(cronTimeEntry.UTCTime) || currentTimeUTC.After(cronTimeEntry.UTCTime) {
+							cronTimeEntry.isJobRunning = true
+							for _, stockModuleKey := range cronTimeEntry.StocksModuleRuleList {
+								// TODO might need to run in parallel?? though in this case not that important
+								// use a factory method to return a crawler instance suitable for the crawl (with caching)
+								iCrawler := crawler.GetCrawler(stockModuleKey, c.pCfg.ModuleConfigs)
+								err2 := iCrawler.Crawl(stockModuleKey)
+								if err2 != nil {
+									err = err2
+									return
+								}
+							} // end -- for (all stock module involved run)
+							// TODO update the cron-time entries to tomorrow
+						}
+					} // end -- if (job running)??
+				}
+			}
+		}()
+	}
+	return
+}
+
+// stop the running cron ticker loop
+func (c *StructCron) StopCron() (err error) {
+	if c.isCronTickRunning {
+		c.pTickerCron.Stop()
+	}
+	return
+}
 
 // TODO add a new method for running the cron loop (tick) and
 //  do crawling by calling StructGenericCrawler
