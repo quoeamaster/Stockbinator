@@ -24,6 +24,7 @@ import (
 	"github.com/daviddengcn/go-colortext"
 	"github.com/daviddengcn/go-colortext/fmt"
 	"github.com/emicklei/go-restful"
+	"reflect"
 	"time"
 )
 
@@ -94,25 +95,31 @@ timezone[%v], stockModuleRule[%v]`, hour24, min, sec, timezone, stocksModuleRule
 //   StructCronEntry contains the stocksModuleRule => can look up the rule(s)
 //    for scrapping etc (e.g. url, rule_price)
 		// a) prepare the cron-time for today
-		cronTime := util.CreateTodayTargetTimeByHourMinTimezone(hour24, min, timezone)
+		cronDisplayTime := util.CreateTodayTargetTimeByHourMinTimezone(hour24, min, timezone)
+		pCronTimeUTC, err2 := util.ParseStringDateToTodayUTC(hour24, min, timezone)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		cronTimeUTC := pCronTimeUTC.Format(util.CommonDateFormat)
 
 		// b) check if the entry is already there or not
-		if c.cronTimeEntries[cronTime] != nil {
+		if c.cronTimeEntries[cronTimeUTC] != nil {
 			// means existed
-			pEntry := c.cronTimeEntries[cronTime]
+			pEntry := c.cronTimeEntries[cronTimeUTC]
 			pEntry.StocksModuleRuleList = append(pEntry.StocksModuleRuleList, stocksModuleRule)
 
 		} else {
 			// create a new entry
-			pDate, err2 := util.ParseStringDateToTodayUTC(hour24, min, timezone)
+			// pDate, err2 := util.ParseStringDateToTodayUTC(hour24, min, timezone)
 			if err2 != nil {
 				return
 			} else {
 				pEntry := NewStructCronEntry()
-				pEntry.DisplayName = cronTime
-				pEntry.UTCTime = pDate
+				pEntry.DisplayName = cronDisplayTime
+				pEntry.UTCTime = pCronTimeUTC
 				pEntry.StocksModuleRuleList = append(pEntry.StocksModuleRuleList, stocksModuleRule)
-				c.cronTimeEntries[cronTime] = pEntry
+				c.cronTimeEntries[cronTimeUTC] = pEntry
 			}
 		} // end -- if (cronTimeEntries exists check)
 	}
@@ -209,10 +216,12 @@ hour24 (default 0), min (default 0), sec (default 0), timezone (default "+00:00"
 		} else {
 			switch bInserted {
 			case true:
-				pRO = util.NewStructCommonResponse(201, fmt.Sprintf("a new time-cron entry has been scheduled, stockModuleRule => %v", stockModuleRule))
+				pRO = util.NewStructCommonResponse(201, fmt.Sprintf(
+					"a new time-cron entry has been scheduled, stockModuleRule => %v", stockModuleRule))
 				break
 			default:
-				pRO = util.NewStructCommonResponse(200, fmt.Sprintf("an existing time-cron entry has been re-scheduled, stockModuleRule => %v", stockModuleRule))
+				pRO = util.NewStructCommonResponse(200, fmt.Sprintf(
+					"an existing time-cron entry has been re-scheduled, stockModuleRule => %v", stockModuleRule))
 			}
 		}
 	}
@@ -224,13 +233,25 @@ hour24 (default 0), min (default 0), sec (default 0), timezone (default "+00:00"
 }
 
 func (c *StructCron) listTimeCronAPI(pReq *restful.Request, pRes *restful.Response) {
-// TODO do xxx to UTC conversion here
+	cfg := c.pCfg.ModuleConfigs["stock_aastocks"]
+	tencent := cfg.Rules.Get("700_tencent", "rule_pe").String("no_idea")
+	fmt.Printf("%v - %v\n", reflect.TypeOf(tencent), tencent)
+
+
 	err := pRes.WriteAsJson(c.cronTimeEntries)
 	if err != nil {
 		// just log and continue to serve (sometimes it is a disconnection which could be re-covered)
 		c.logError("listTimeCronAPI", err.Error())
 	}
 }
+
+
+
+// TODO add a new method for running the cron loop (tick) and
+//  do crawling by calling StructGenericCrawler
+
+
+
 
 func (c *StructCron) logError(funcName string, msg string) {
 	ctfmt.Print(ct.Red, true, fmt.Sprintf("[%v%v] ", moduleWSCron, funcName))

@@ -15,6 +15,13 @@
  */
 package util
 
+import (
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"strings"
+)
+
 type StructCommonResponse struct {
 	// http response code (only 200 or 201 is a Successful operation)
 	ResponseCode int
@@ -28,4 +35,23 @@ func NewStructCommonResponse(responseCode int, message string) *StructCommonResp
 	pInst.ResponseCode = responseCode
 	pInst.Message = message
 	return pInst
+}
+
+// method to get contents from a URL
+func GetContentFromUrl(url string) (content string, err error) {
+	if len(url) == 0 || strings.Compare(strings.Trim(url, ""), "") == 0 {
+		err = errors.New("url provided is invalid, probably EMPTY~")
+		return
+	}
+	resp, err := http.Get(url)
+	if err != nil {
+		return
+	}
+	defer func() {
+		resp.Body.Close()
+	}()
+	bContent, err := ioutil.ReadAll(resp.Body)
+	content = string(bContent)
+
+	return
 }
