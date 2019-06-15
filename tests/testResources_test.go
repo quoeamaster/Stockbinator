@@ -19,6 +19,11 @@ var (
 	pFlagCrawler = flag.Bool("crawler", false, "run all crawler test")
 	pFlagAAStocksCrawler = flag.Bool("crawler.aastocks", false, "run ONLY aastocks crawler test")
 	pFlagGenericCrawler = flag.Bool("crawler.generic", false, "run ONLY generic crawler test")
+
+	pFlagCommonUtil = flag.Bool("util.common", false, "run ONLY common-util test")
+
+	// flag indicating logging feature
+	pFlagLog = flag.Bool("log", false, "display logs about the test")
 )
 
 // Testing method
@@ -31,6 +36,11 @@ func TestMain(m *testing.M) {
 
 	// crawler test related
 	if *pFlagCrawler {
+		err = setupStockModuleConfig()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
 		err = setupCrawlerTestObjects()
 		if err != nil {
 			fmt.Println(err)
@@ -39,6 +49,11 @@ func TestMain(m *testing.M) {
 		setupCrawlerAAStocks()
 		setupCrawlerGeneric()
 	} else if *pFlagAAStocksCrawler {
+		err = setupStockModuleConfig()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
 		err = setupCrawlerTestObjects()
 		if err != nil {
 			fmt.Println(err)
@@ -46,13 +61,25 @@ func TestMain(m *testing.M) {
 		}
 		setupCrawlerAAStocks()
 	} else if *pFlagGenericCrawler {
+		err = setupStockModuleConfig()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
 		err = setupCrawlerTestObjects()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
 		}
 		setupCrawlerGeneric()
+	} else if *pFlagCommonUtil {
+		err = setupStockModuleConfig()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(-1)
+		}
 	}
+
 	// TODO: add other test setup
 
 	code := m.Run()
@@ -83,10 +110,11 @@ type StructCrawlerTestObjects struct {
 }
 var instanceStructCrawlerTestObjects *StructCrawlerTestObjects
 
+var SharableStockModuleConfig config.StructStockModuleConfig
+
 // corresponding setupXXX methods
 
-func setupCrawlerTestObjects() (err error)  {
-	// add setup code here
+func setupStockModuleConfig() (err error) {
 	// config object (could mock in the future)
 	pRuleConfig := config2.NewConfig()
 	fSrc := file.NewSource(file.WithPath("../config/rules.toml"))
@@ -108,9 +136,15 @@ func setupCrawlerTestObjects() (err error)  {
 	pStockModuleConfig.Rules = pRuleConfig
 	pStockModuleConfig.Holidays = pHoliday
 
+	SharableStockModuleConfig = *pStockModuleConfig
+	return
+}
+
+func setupCrawlerTestObjects() (err error)  {
+	// add setup code here
 	instanceStructCrawlerTestObjects = new(StructCrawlerTestObjects)
 	instanceStructCrawlerTestObjects.ConfigMap = make(map[string]config.StructStockModuleConfig)
-	instanceStructCrawlerTestObjects.ConfigMap[stockModuleName] = *pStockModuleConfig
+	instanceStructCrawlerTestObjects.ConfigMap[stockModuleName] = SharableStockModuleConfig
 
 	return
 }
@@ -125,4 +159,16 @@ func setupCrawlerGeneric()  {
 
 func teardownCrawlerTestObject() (err error) {
 	return
+}
+
+
+// * **************** *
+// * common functions *
+// * **************** *
+
+// loggoing function, only logs when the "log" flag is passed
+func LogTestOutput(testName, message string) {
+	if *pFlagLog {
+		fmt.Printf("[%v] %v\n", testName, message)
+	}
 }

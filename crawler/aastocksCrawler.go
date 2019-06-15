@@ -21,7 +21,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
+	"time"
 )
 
 type StructAAStocksCrawler struct {
@@ -42,7 +44,19 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 	names := strings.Split(moduleKey, ".")
 	if names != nil && len(names) == 2 {
 		stockModuleConfig := s.StockModuleConfig[names[0]]
-// TODO: also check if today is a holiday based on the rule-config
+		// SKIP weekend (use local locale time, no need UTC)
+		if util.IsWeekend(time.Now()) {
+			fmt.Println("skipped as today is weekend")
+			return
+		}
+		// SKIP holiday
+		arrHolidays := stockModuleConfig.Holidays.Get("2019", "holidays")
+		fmt.Println(reflect.TypeOf(arrHolidays))
+		arrHolidaysSlice := make([]string, 30)
+		arrHolidaysSlice = arrHolidays.StringSlice(arrHolidaysSlice)
+		fmt.Println(arrHolidaysSlice)
+		fmt.Println(reflect.TypeOf(arrHolidaysSlice[0]))
+
 // stockModuleConfig.Holidays
 fmt.Println(stockModuleConfig.Holidays.Map())
 

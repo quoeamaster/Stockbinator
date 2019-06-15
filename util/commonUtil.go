@@ -229,8 +229,55 @@ func ParseStringDateToTodayUTC(hh24, mm int, timezone string) (pDate time.Time, 
 }
 
 
-func ParseStringToDateAndUTC(date string) (givenDateInStr, utcDateInStr string, err error) {
+// check if the given date is on weekend (day-of-week 0 = sunday, 6 = saturday)
+func IsWeekend(date time.Time) (isWeekend bool) {
+	dayOfWeek := int(date.Weekday())
+	if dayOfWeek == 0 || dayOfWeek == 6 {
+		isWeekend = true
+	} else {
+		isWeekend = false
+	}
+	return
+}
 
+// check if the given date is one of the holidays given
+func IsHoliday(date *time.Time, dateInString *string, holidays []string) (isHoliday bool, err error) {
+	var targetDate time.Time
+	if date == nil && dateInString == nil {
+		err = errors.New("both date and dateInstring parameter is invalid => nil\n")
+	} else if dateInString != nil {
+		targetDate, err = time.Parse(CommonDateFormat, *dateInString)
+		if err != nil {
+			return
+		}
+	} else {
+		targetDate = *date
+	}
+	targetDate = targetDate.UTC()
 
+	// check against the holiday[]
+	if holidays == nil || len(holidays) == 0 {
+		err = errors.New("invalid holidays array, it is either nil or empty")
+		return
+	}
+	for _, holiday := range holidays {
+		hDate, err2 := time.Parse(CommonDateFormat, holiday)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		hDate = hDate.UTC()
+		// compare
+		// a) same = holiday (return true)
+		// b) different, but hDate is already after the targetDate which this is a FUTURE holiday
+		// 	comparing with targetDate and should skip the check (return false)
+		if targetDate.Equal(hDate) {
+			isHoliday = true
+			return
+		} else if targetDate.Before(hDate) {
+			isHoliday = false
+			return
+		} // end -- if (targetDate vs hDate)
+	}
 	return
 }
