@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6fd4884f-0e95-4587-ac27-ded56bc3c8d0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/common/sharableResource.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/sharableResource.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crawler/aastocksCrawler.go" beforeDir="false" afterPath="$PROJECT_DIR$/crawler/aastocksCrawler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/commonUtil_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/commonUtil_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/crawlerUtil_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/tests/crawlerUtil_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/commonUtil.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/commonUtil.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,26 +17,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common/sharableResource.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/util/commonUtil.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="177" column="43" selection-start-line="177" selection-start-column="5" selection-end-line="177" selection-end-column="43" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tests/crawlerUtil_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="19" column="120" selection-start-line="19" selection-start-column="120" selection-end-line="19" selection-end-column="120" />
+            <state relative-caret-position="315">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -45,17 +26,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="551">
-              <caret line="272" column="52" selection-start-line="272" selection-start-column="52" selection-end-line="272" selection-end-column="52" />
+            <state relative-caret-position="198">
+              <caret line="272" column="52" lean-forward="true" selection-start-line="272" selection-start-column="52" selection-end-line="272" selection-end-column="52" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crawler/aastocksCrawler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
+            <state relative-caret-position="273">
+              <caret line="83" column="65" selection-start-line="83" selection-start-column="65" selection-end-line="83" selection-end-column="65" />
             </state>
           </provider>
         </entry>
@@ -111,13 +92,13 @@
         <option value="$PROJECT_DIR$/tests/util_test.go" />
         <option value="$PROJECT_DIR$/config/holidays_2018.toml" />
         <option value="$PROJECT_DIR$/config/config.go" />
-        <option value="$PROJECT_DIR$/common/sharableResource.go" />
         <option value="$PROJECT_DIR$/tests/testResources_test.go" />
         <option value="$PROJECT_DIR$/util/crawlerUtil.go" />
         <option value="$PROJECT_DIR$/util/commonUtil.go" />
         <option value="$PROJECT_DIR$/tests/commonUtil_test.go" />
-        <option value="$PROJECT_DIR$/crawler/aastocksCrawler.go" />
         <option value="$PROJECT_DIR$/tests/crawlerUtil_test.go" />
+        <option value="$PROJECT_DIR$/common/sharableResource.go" />
+        <option value="$PROJECT_DIR$/crawler/aastocksCrawler.go" />
       </list>
     </option>
   </component>
@@ -262,15 +243,16 @@
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/crawler/aastocksCrawler.go</url>
-          <line>71</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/tests/testResources_test.go</url>
           <line>88</line>
           <properties />
           <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/crawler/aastocksCrawler.go</url>
+          <line>84</line>
+          <properties />
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -396,24 +378,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="551">
-          <caret line="272" column="52" selection-start-line="272" selection-start-column="52" selection-end-line="272" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/testResources_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2415">
           <caret line="170" column="5" selection-start-line="170" selection-start-column="5" selection-end-line="170" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/sharableResource.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
         </state>
       </provider>
     </entry>
@@ -427,20 +395,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crawler/aastocksCrawler.go">
+    <entry file="file://$PROJECT_DIR$/tests/commonUtil_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
+        <state>
+          <caret lean-forward="true" selection-end-line="14" selection-end-column="3" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/commonUtil_test.go">
+    <entry file="file://$PROJECT_DIR$/tests/crawlerUtil_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2424">
-          <caret line="180" column="32" selection-start-line="180" selection-start-column="26" selection-end-line="180" selection-end-column="32" />
-          <folding>
-            <element signature="e#658#715#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="210">
+          <caret line="14" column="3" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
         </state>
       </provider>
     </entry>
@@ -451,10 +416,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/crawlerUtil_test.go">
+    <entry file="file://$PROJECT_DIR$/common/sharableResource.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="19" column="120" selection-start-line="19" selection-start-column="120" selection-end-line="19" selection-end-column="120" />
+        <state relative-caret-position="315">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="272" column="52" lean-forward="true" selection-start-line="272" selection-start-column="52" selection-end-line="272" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawler/aastocksCrawler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="83" column="65" selection-start-line="83" selection-start-column="65" selection-end-line="83" selection-end-column="65" />
         </state>
       </provider>
     </entry>

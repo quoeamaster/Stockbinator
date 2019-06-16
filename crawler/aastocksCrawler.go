@@ -62,14 +62,6 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 			fmt.Println("skipped as today is holiday")
 			return
 		}
-		// valid on holidays?? (might not be crucial to this case though)
-		//arrHolidays := stockModuleConfig.Holidays.Get("2019", "holidays")
-		//fmt.Println(reflect.TypeOf(arrHolidays))
-		//arrHolidaysSlice := make([]string, 30)
-		//arrHolidaysSlice = arrHolidays.StringSlice(arrHolidaysSlice)
-		//fmt.Println(arrHolidaysSlice)
-		//fmt.Println(reflect.TypeOf(arrHolidaysSlice[0]))
-		//fmt.Println(stockModuleConfig.Holidays.Map())
 
 		ruleConfig := stockModuleConfig.Rules
 		url := ruleConfig.Get(names[1], ruleUrl).String(valueUnknown)
@@ -89,6 +81,7 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 			err = err2
 			return
 		}
+		// TODO: save the scrapped value into a STORE (e.g. file-store or elasticsearch-store)
 		fmt.Println(valPrice)
 		fmt.Println(valPriceFluctuations)
 		fmt.Println(valTrxAmount)
