@@ -1,1 +1,1 @@
-go test -crawler.aastocks -util.common -log
+go test -crawler.aastocks -util.common -util.crawler -log

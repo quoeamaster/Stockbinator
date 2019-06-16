@@ -50,6 +50,7 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 			return
 		}
 		// SKIP holiday
+// TODO: get "current" year's holidays (of coz) add a method to extract the right holiday config
 		arrHolidays := stockModuleConfig.Holidays.Get("2019", "holidays")
 		fmt.Println(reflect.TypeOf(arrHolidays))
 		arrHolidaysSlice := make([]string, 30)

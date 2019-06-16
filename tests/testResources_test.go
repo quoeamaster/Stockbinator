@@ -1,3 +1,18 @@
+/*
+ *  Copyright Project - Stockbinator, Author - quoeamaster, (C) 2019
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package tests
 
 import (
@@ -21,6 +36,7 @@ var (
 	pFlagGenericCrawler = flag.Bool("crawler.generic", false, "run ONLY generic crawler test")
 
 	pFlagCommonUtil = flag.Bool("util.common", false, "run ONLY common-util test")
+	pFlagCrawlerUtil = flag.Bool("util.crawler", false, "run ONLY crawler-util test")
 
 	// flag indicating logging feature
 	pFlagLog = flag.Bool("log", false, "display logs about the test")
@@ -37,47 +53,44 @@ func TestMain(m *testing.M) {
 	// crawler test related
 	if *pFlagCrawler {
 		err = setupStockModuleConfig()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		err = setupCrawlerTestObjects()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		setupCrawlerAAStocks()
 		setupCrawlerGeneric()
 	} else if *pFlagAAStocksCrawler {
 		err = setupStockModuleConfig()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		err = setupCrawlerTestObjects()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		setupCrawlerAAStocks()
 	} else if *pFlagGenericCrawler {
 		err = setupStockModuleConfig()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		err = setupCrawlerTestObjects()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
 		setupCrawlerGeneric()
-	} else if *pFlagCommonUtil {
+	}
+
+	// util series
+
+	if *pFlagCommonUtil {
 		err = setupStockModuleConfig()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(-1)
-		}
+		handlerCommonError(err)
+
+	}
+	if *pFlagCrawlerUtil {
+		err = setupStockModuleConfig()
+		handlerCommonError(err)
+
+		err = setupHoliday2018Config()
+		handlerCommonError(err)
 	}
 
 	// TODO: add other test setup
@@ -96,7 +109,13 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-
+// handler common error (e.g. print out error message and Exit process with -1 code)
+func handlerCommonError(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
+}
 
 // common shared objects or variables
 
@@ -111,6 +130,8 @@ type StructCrawlerTestObjects struct {
 var instanceStructCrawlerTestObjects *StructCrawlerTestObjects
 
 var SharableStockModuleConfig config.StructStockModuleConfig
+
+var Holidays2018Config config2.Config
 
 // corresponding setupXXX methods
 
@@ -137,6 +158,17 @@ func setupStockModuleConfig() (err error) {
 	pStockModuleConfig.Holidays = pHoliday
 
 	SharableStockModuleConfig = *pStockModuleConfig
+	return
+}
+
+func setupHoliday2018Config() (err error) {
+	Holidays2018Config = config2.NewConfig()
+	fSrc := file.NewSource(file.WithPath("../config/holidays_2018.toml"))
+	err = Holidays2018Config.Load(fSrc)
+	if err != nil {
+		fmt.Printf("could not load the holidays_2018.toml, %v\n", err)
+		return
+	}
 	return
 }
 
