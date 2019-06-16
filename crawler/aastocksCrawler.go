@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 	"time"
 )
@@ -50,16 +49,27 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 			return
 		}
 		// SKIP holiday
-// TODO: get "current" year's holidays (of coz) add a method to extract the right holiday config
-		arrHolidays := stockModuleConfig.Holidays.Get("2019", "holidays")
-		fmt.Println(reflect.TypeOf(arrHolidays))
-		arrHolidaysSlice := make([]string, 30)
-		arrHolidaysSlice = arrHolidays.StringSlice(arrHolidaysSlice)
-		fmt.Println(arrHolidaysSlice)
-		fmt.Println(reflect.TypeOf(arrHolidaysSlice[0]))
-
-// stockModuleConfig.Holidays
-fmt.Println(stockModuleConfig.Holidays.Map())
+		// get "current" year's holidays (of coz) add a method to extract the right holiday config
+		holidayRules := s.StockModuleConfig[names[0]].Holidays
+		holidaySlice, err2 := util.GetCurrentYearHolidays(&holidayRules)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		now := time.Now()
+		isHoliday, err2 := util.IsHoliday(&now, nil, holidaySlice)
+		if isHoliday {
+			fmt.Println("skipped as today is holiday")
+			return
+		}
+		// valid on holidays?? (might not be crucial to this case though)
+		//arrHolidays := stockModuleConfig.Holidays.Get("2019", "holidays")
+		//fmt.Println(reflect.TypeOf(arrHolidays))
+		//arrHolidaysSlice := make([]string, 30)
+		//arrHolidaysSlice = arrHolidays.StringSlice(arrHolidaysSlice)
+		//fmt.Println(arrHolidaysSlice)
+		//fmt.Println(reflect.TypeOf(arrHolidaysSlice[0]))
+		//fmt.Println(stockModuleConfig.Holidays.Map())
 
 		ruleConfig := stockModuleConfig.Rules
 		url := ruleConfig.Get(names[1], ruleUrl).String(valueUnknown)

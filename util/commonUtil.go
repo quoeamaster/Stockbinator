@@ -228,6 +228,52 @@ func ParseStringDateToTodayUTC(hh24, mm int, timezone string) (pDate time.Time, 
 	return
 }
 
+func GetTimeTruncatedDate(givenDate *time.Time) (date time.Time, err error) {
+	if givenDate == nil {
+		date = time.Now()
+	} else {
+		date = *givenDate
+	}
+	// start truncate
+	sDate := fmt.Sprintf("%v", date.Year())
+	iDatePart := int(date.Month())
+	if iDatePart < 10 {
+		sDate = fmt.Sprintf("%v-0%v", sDate, iDatePart)
+	} else {
+		sDate = fmt.Sprintf("%v-%v", sDate, iDatePart)
+	}
+	iDatePart = int(date.Day())
+	if iDatePart < 10 {
+		sDate = fmt.Sprintf("%v-0%v", sDate, iDatePart)
+	} else {
+		sDate = fmt.Sprintf("%v-%v", sDate, iDatePart)
+	}
+	sDate = fmt.Sprintf("%vT00:00:00", sDate)
+	// timezone handling
+	_, zoneDiff := date.Zone()
+	// 3600 sec = 1 hour
+	// TODO: handling => (assume all perfect timezone in hours and no "half-hour" such as +05:30)
+	zoneDiffHour := zoneDiff / 3600
+	if zoneDiffHour < 0 {
+		sDate = fmt.Sprintf("%v-", sDate)
+		// absolute it
+		zoneDiffHour = -1 * zoneDiffHour
+	} else {
+		sDate = fmt.Sprintf("%v+", sDate)
+	}
+	if zoneDiffHour < 10 {
+		sDate = fmt.Sprintf("%v0%v:00", sDate, zoneDiffHour)
+	} else {
+		sDate = fmt.Sprintf("%v%v:00", sDate, zoneDiffHour)
+	}
+	// convert to the final result
+	date, err = time.Parse(CommonDateFormat, sDate)
+	if err != nil {
+		return
+	}
+	return
+}
+
 
 // check if the given date is on weekend (day-of-week 0 = sunday, 6 = saturday)
 func IsWeekend(date time.Time) (isWeekend bool) {

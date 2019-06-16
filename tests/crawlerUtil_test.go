@@ -17,7 +17,8 @@ func TestGetCurrentYearHolidays(t *testing.T) {
 		holidayLen 	int
 	}{
 		{ "2019", 18 },
-		{ "2018", 19 },
+		// since you should not get any as this year is NOT 2018 (though in the holidays_2018.toml there are 19 entries)
+		{ "2018", 0 },
 	}
 
 	// test on current year (e.g. 2019)

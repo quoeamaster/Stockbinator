@@ -18,11 +18,14 @@ package tests
 import (
 	"Stockbinator/util"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 )
 
 // class for testing all common-util functions
+
+// Test on isWeekend
 
 func TestIsWeekend(t *testing.T)  {
 	if !*pFlagCommonUtil {
@@ -55,9 +58,10 @@ func TestIsWeekend(t *testing.T)  {
 }
 
 type structDateForTest struct {
-	date      time.Time
-	dayOfWeek int
-	isHoliday bool
+	date      	time.Time
+	dayOfWeek 	int
+	isHoliday 	bool
+	displayTime string
 }
 
 // creation of 1 week of data which starts with 2019-06-02 which is a sunday (day-of-week == 0)
@@ -80,6 +84,8 @@ func helperTestIsWeekend() (knownWeek []structDateForTest, err error) {
 	}
 	return
 }
+
+// Test on isHoliday
 
 // note that the holidays are targeted for the year 2019 of HK's public holidays
 // https://www.gov.hk/en/about/abouthk/holiday/2019.htm
@@ -144,5 +150,70 @@ func helperTestIsHoliday() (dates []structDateForTest) {
 	return
 }
 
+// Test on truncated time date
+
+func TestGetTimeTruncatedDate(t *testing.T)  {
+	if !*pFlagCommonUtil {
+		t.SkipNow()
+	}
+	LogTestOutput("TestGetTimeTruncatedDate", "** start test **")
+
+	results := helperTestGetTimeTruncatedDate()
+	for idx, target := range results {
+		dDate, err := util.GetTimeTruncatedDate(&target.date)
+		if err != nil {
+			t.Fatal(err)
+		}
+		sDate := dDate.Format(util.CommonDateFormat)
+		if strings.Compare(target.displayTime, sDate) != 0 {
+			t.Fatal(fmt.Sprintf("expected date to be [%v] but got [%v]", target.displayTime, sDate))
+		}
+		LogTestOutput("TestGetTimeTruncatedDate", fmt.Sprintf("round %v passed", idx))
+	}
+
+	LogTestOutput("TestGetTimeTruncatedDate", "** end test **\n")
+}
+
+func helperTestGetTimeTruncatedDate() (targets []structDateForTest) {
+	targets = make([]structDateForTest, 5)
+
+	// create several dates with timezone
+	// 0. current time in current timezone
+	date := time.Now()
+	dStruct := new(structDateForTest)
+	dStruct.date = date
+	dStruct.displayTime = util.CreateTodayTargetTimeByHourMinTimezone(0,0,"+08:00")
+	targets[0] = *dStruct
+
+	// 1. 2017-12-25T13:12:34-06:00
+	date, _ = time.Parse(util.CommonDateFormat, "2017-12-25T13:12:34-06:00")
+	dStruct = new(structDateForTest)
+	dStruct.date = date
+	dStruct.displayTime = "2017-12-25T00:00:00-06:00"
+	targets[1] = *dStruct
+
+	// 2. 2021-09-02T00:23:00+08:00
+	date, _ = time.Parse(util.CommonDateFormat, "2021-09-02T00:23:00+08:00")
+	dStruct = new(structDateForTest)
+	dStruct.date = date
+	dStruct.displayTime = "2021-09-02T00:00:00+08:00"
+	targets[2] = *dStruct
+
+	// 3. 2021-10-30T00:00:56+00:00
+	date, _ = time.Parse(util.CommonDateFormat, "2021-10-30T00:00:56+00:00")
+	dStruct = new(structDateForTest)
+	dStruct.date = date
+	dStruct.displayTime = "2021-10-30T00:00:00+00:00"
+	targets[3] = *dStruct
+
+	// 4. 2021-10-30T23:00:00-01:00
+	date, _ = time.Parse(util.CommonDateFormat, "2021-10-30T23:00:00-01:00")
+	dStruct = new(structDateForTest)
+	dStruct.date = date
+	dStruct.displayTime = "2021-10-30T00:00:00-01:00"
+	targets[4] = *dStruct
+
+	return
+}
 
 
