@@ -327,3 +327,11 @@ func IsHoliday(date *time.Time, dateInString *string, holidays []string) (isHoli
 	}
 	return
 }
+
+// parse and find out the env variable keys (e.g. {ENV_VAR_KEY} ) plus the indices involved per match
+func ParseEnvVar(key string) (matches []string, matchesIndex [][]int,  err error) {
+	regMatcher, err := regexp.Compile(`\{[a-z|A-Z|-|_]+\}`)
+	matches = regMatcher.FindAllString(key, -1)
+	matchesIndex = regMatcher.FindAllStringIndex(key, -1)
+	return
+}

@@ -16,8 +16,10 @@
 package tests
 
 import (
+	"Stockbinator/common"
 	"Stockbinator/config"
 	"Stockbinator/crawler"
+	"Stockbinator/store"
 	"flag"
 	"fmt"
 	config2 "github.com/micro/go-config"
@@ -37,6 +39,8 @@ var (
 
 	pFlagCommonUtil = flag.Bool("util.common", false, "run ONLY common-util test")
 	pFlagCrawlerUtil = flag.Bool("util.crawler", false, "run ONLY crawler-util test")
+
+	pFlagFilestore = flag.Bool("store.file", false, "run ONLY filestore test")
 
 	// flag indicating logging feature
 	pFlagLog = flag.Bool("log", false, "display logs about the test")
@@ -93,6 +97,14 @@ func TestMain(m *testing.M) {
 		handlerCommonError(err)
 	}
 
+	// filestore series
+	if *pFlagFilestore {
+		err = setupSharableStore()
+		handlerCommonError(err)
+
+		setupFilestore()
+	}
+
 	// TODO: add other test setup
 
 	code := m.Run()
@@ -133,7 +145,25 @@ var SharableStockModuleConfig config.StructStockModuleConfig
 
 var Holidays2018Config config2.Config
 
+var SharableStoreConfig config2.Config
+var FileStore store.IStore
+
 // corresponding setupXXX methods
+
+func setupSharableStore() (err error) {
+	// setup the config
+	SharableStoreConfig = config2.NewConfig()
+	cfgPath := file.NewSource(file.WithPath("../config/app_test.toml"))
+	err = SharableStoreConfig.Load(cfgPath)
+	handlerCommonError(err)
+
+	return
+}
+
+func setupFilestore()  {
+	// using the default store's filename...
+	FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
+}
 
 func setupStockModuleConfig() (err error) {
 	// config object (could mock in the future)

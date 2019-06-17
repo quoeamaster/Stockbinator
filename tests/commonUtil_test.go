@@ -216,4 +216,62 @@ func helperTestGetTimeTruncatedDate() (targets []structDateForTest) {
 	return
 }
 
+// test env parsing
+func TestParseEnvVar(t *testing.T)  {
+	LogTestOutput("TestParseEnvVar", "** start test **")
+	if !*pFlagCommonUtil {
+		t.SkipNow()
+	}
+
+	results := []struct {
+		key          string
+		matchList    []string
+		matchIndices [][]int
+	}{
+		{ key: "/{testing_id}/movie", matchList: []string{ "{testing_id}" }, matchIndices: [][]int{ { 1, 13 } } },
+		{ key: "hd0/{DB_PATH}/backup", matchList: []string{ "{DB_PATH}" }, matchIndices: [][]int{ { 4, 13 } } },
+		{ key: "hd0/{twitter}/{gifs}", matchList: []string{ "{twitter}", "{gifs}" }, matchIndices: [][]int{ { 4, 13 }, { 14, 20 } } },
+	}
+	for _, result := range results {
+		matches, matchIndices, err := util.ParseEnvVar(result.key)
+		handlerCommonError(err)
+		// compare matches with matchList
+		if matches == nil || len(matches) != len(result.matchList) {
+			LogTestOutput("TestParseEnvVar", fmt.Sprintf("matches returned => %v VS expected matchList => %v",
+				matches, result.matchList))
+			t.Fatal(fmt.Sprintf("either returned matches are nil (%v) OR length of matches VS expected matches are different => %v vs %v",
+				matches == nil, len(matches), len(result.matchList)))
+		} else {
+			for i2, match := range matches {
+				if strings.Compare(match, result.matchList[i2]) != 0 {
+					t.Fatal(fmt.Sprintf("expected %v BUT got %v", match, result.matchList[i2]))
+				}
+			} // end -- for (matches elements loop)
+		}
+
+		// check also the indices (start, end idx per match)
+		if matchIndices == nil || len(matchIndices) != len(result.matchIndices) {
+			t.Fatal(fmt.Sprintf("either indices returned is nil (%v) OR expected length is %v BUT got %v",
+				matchIndices==nil, len(matchIndices), len(result.matchIndices)))
+		} else {
+			for i3, idx1stLv := range matchIndices {
+				// length check again
+				if len(idx1stLv) != len(result.matchIndices[i3]) {
+					t.Fatal(fmt.Sprintf("on indices level check, element %v, lenght expected is %v BUT got %v",
+						i3, len(idx1stLv), len(result.matchIndices)))
+				}
+				expectedIndices := result.matchIndices[i3]
+				for i4, idxValue := range idx1stLv {
+					if idxValue != expectedIndices[i4] {
+						t.Fatal(fmt.Sprintf("expected %v BUT got %v", idxValue, expectedIndices[i4]))
+					}
+				}
+			} // end - for (1st level indices match)
+		}
+	}
+	LogTestOutput("TestParseEnvVar", "ALL env value validation passed")
+	LogTestOutput("TestParseEnvVar", "ALL matched indices level check passed")
+
+	LogTestOutput("TestParseEnvVar", "** end test **\n")
+}
 

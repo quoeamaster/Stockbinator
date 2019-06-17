@@ -20,5 +20,20 @@ package common
 // * that would not involve circular import issues.
 // * ******************************************************************
 
-// config entry / key => "holidays" (used in holiday.toml)
-const ConfigKeyHolidays = "holidays"
+
+const (
+	// config entry / key => "holidays" (used in holiday.toml)
+	ConfigKeyHolidays = "holidays"
+
+	// config entry / key => "filestore" (app.toml)
+	ConfigKeyStoreFile = "filestore"
+	// config entry / key => "datastore" (app.toml)
+	ConfigKeyStoreData = "datastore"
+
+	// config entry / key => "repo" (app.toml)
+	ConfigKeyRepo = "repo"
+
+	// store -> filestore's default file name if not provided
+	StoreDefaultDateFilename = "default.data"
+	StoreKeyDefaultDateFilename = "filestore.default.filename"
+)
