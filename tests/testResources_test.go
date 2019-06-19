@@ -26,6 +26,7 @@ import (
 	"github.com/micro/go-config/source/file"
 	"os"
 	"testing"
+	"time"
 )
 
 const stockModuleKey = "stock_aastocks.700_tencent"
@@ -147,6 +148,8 @@ var Holidays2018Config config2.Config
 
 var SharableStoreConfig config2.Config
 var FileStore store.IStore
+// 5 entries for the file-store to write / update
+var TestFilestoreEntriesList = make([]map[string]store.StructStoreValue, 5)
 
 // corresponding setupXXX methods
 
@@ -163,6 +166,46 @@ func setupSharableStore() (err error) {
 func setupFilestore()  {
 	// using the default store's filename...
 	FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
+	// setup filestore entries too
+	for i := 0; i < len(TestFilestoreEntriesList); i++ {
+		dataRow := make(map[string]store.StructStoreValue)
+
+		pDataPrice := new(store.StructStoreValue)
+		pDataPrice.Type = store.TypeFloat
+		pDataPrice.Value = float64((i + 1)*50)
+		dataRow["price"] = *pDataPrice
+
+		pPriceRange := new(store.StructStoreValue)
+		pPriceRange.Type = store.TypeString
+		pPriceRange.Value = fmt.Sprintf("%v-%v", (i + 1)*50-15, (i + 1)*50+15)
+		dataRow["price_fluctuation"] = *pPriceRange
+
+		pVol := new(store.StructStoreValue)
+		pVol.Type = store.TypeString
+		pVol.Value = fmt.Sprintf("%v Million", (i + 1)*500)
+		dataRow["volume"] = *pVol
+
+		pDate := new(store.StructStoreValue)
+		pDate.Type = store.TypeDate
+		if i != 4 {
+			currentTime := time.Now()
+			for j := 0; j < i; j++ {
+				currentTime = currentTime.Add(time.Hour * 24)
+			}
+			pDate.Value = currentTime.Truncate(time.Hour)
+
+		} else {
+			pDate.Value = time.Now().Truncate(time.Hour)
+		}
+		dataRow["trx_date"] = *pDate
+
+		pStockId := new(store.StructStoreValue)
+		pStockId.Type = store.TypeString
+		pStockId.Value = "700_tencent"
+		dataRow["stock_id"] = *pStockId
+
+		TestFilestoreEntriesList[i] = dataRow
+	}
 }
 
 func setupStockModuleConfig() (err error) {

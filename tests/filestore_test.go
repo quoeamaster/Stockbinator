@@ -16,22 +16,48 @@
 package tests
 
 import (
+	"Stockbinator/store"
+	"fmt"
 	"testing"
 )
+
 
 func TestFilestorePersistFlow(t *testing.T) {
 	if !*pFlagFilestore {
 		t.SkipNow()
 	}
 	LogTestOutput("TestFilestorePersistFlow", "** start test **")
-	LogTestOutput("TestFilestorePersistFlow", "a. remove test file")
-	err := FileStore.RemoveAll()
+	LogTestOutput("TestFilestorePersistFlow", "a. remove test file contents")
+	resp, err := FileStore.RemoveAll()
 	if err != nil {
-		t.Fatal("could not remove the entries from filestore instance")
+		t.Fatal(fmt.Sprintf("could not remove the entries from filestore instance: %v", err))
+	}
+	helperFilestoreFlowsCommonResponseHandler(resp, t)
+
+	LogTestOutput("TestFilestorePersistFlow", "b. add a few entries to the test file")
+	// write 1st 4 entries; leave the last entry for modification
+	for i := 0; i<len(TestFilestoreEntriesList)-1; i++ {
+		entryMap := TestFilestoreEntriesList[i]
+		// LogTestOutput("TestFilestorePersistFlow", fmt.Sprintf("index %v => %v", i, entryMap))
+		resp, err = FileStore.Persist(entryMap)
+		if err != nil {
+			LogTestOutput("TestFilestorePersistFlow", fmt.Sprintf("persist entry failed at index %v", i))
+			t.Fatal(err.Error())
+		}
+		helperFilestoreFlowsCommonResponseHandler(resp, t)
 	}
 
 
 
+
+
+
 	LogTestOutput("TestFilestorePersistFlow", "** end test **\n")
+}
+
+func helperFilestoreFlowsCommonResponseHandler(r store.StructStoreResponse, t *testing.T) {
+	if r.Code != store.CodeSuccess {
+		t.Fatal(fmt.Sprintf("no Error previously HOWEVER there is a non SUCCESS code and message from response =>[%v] %v", r.Code, r.Message))
+	}
 }
 

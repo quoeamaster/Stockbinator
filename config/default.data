@@ -1,0 +1,4 @@
+{"price": 50, "price_fluctuation": "35-65", "volume": "500 Million", "trx_date": "2019-06-19T18:00:00+08:00", "stock_id": "700_tencent" }
+{"price_fluctuation": "85-115", "volume": "1000 Million", "trx_date": "2019-06-20T18:00:00+08:00", "stock_id": "700_tencent", "price": 100 }
+{"price": 150, "price_fluctuation": "135-165", "volume": "1500 Million", "trx_date": "2019-06-21T18:00:00+08:00", "stock_id": "700_tencent" }
+{"price": 200, "price_fluctuation": "185-215", "volume": "2000 Million", "trx_date": "2019-06-22T18:00:00+08:00", "stock_id": "700_tencent" }

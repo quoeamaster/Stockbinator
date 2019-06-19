@@ -36,4 +36,10 @@ const (
 	// store -> filestore's default file name if not provided
 	StoreDefaultDateFilename = "default.data"
 	StoreKeyDefaultDateFilename = "filestore.default.filename"
+
+	// common file status
+	FileStatusAvailable    = 200
+	FileStatusNotAvailable = 404
+	FileStatusLocked       = 401
+	FileStatusUnknown      = 500
 )

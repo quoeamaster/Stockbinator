@@ -21,6 +21,7 @@ const (
 	TypeFloat
 	TypeString
 	TypeBool
+	TypeDate
 )
 
 // code constants
@@ -40,7 +41,8 @@ type StructStoreValue struct {
 	IsArray  bool
 	// is it object or map
 	IsObject bool
-	// key / fieldname representing the value
+	// key / fieldname representing the value (if not given AND was passed through a
+	// map[string]StructStoreValue; then use that key from the map)
 	Key      string
 }
 
@@ -56,15 +58,15 @@ type IStore interface {
 	Persist(data map[string]StructStoreValue) (response StructStoreResponse, err error)
 
 	// read all contents from the store (might be an issue when the content size is HUGE
-	ReadAll() (content string, err error)
+	ReadAll() (response StructStoreResponse, content string, err error)
 	// read only the content associated by the KEY, PARAMS contains additional information for the read operation
-	ReadByKey(key string, params interface{}) (value StructStoreValue, err error)
+	ReadByKey(key string, params interface{}) (response StructStoreResponse, value StructStoreValue, err error)
 
 	// modify the value associated with the key
 	ModifyByKey(key string, value StructStoreValue) (response StructStoreResponse, err error)
 
 	// remove value associated with the key
-	RemoveByKey(key string) (valueRemoved StructStoreValue, err error)
+	RemoveByKey(key string) (response StructStoreResponse, valueRemoved StructStoreValue, err error)
 	// remove all data in the store, be careful~
-	RemoveAll() (err error)
+	RemoveAll() (response StructStoreResponse, err error)
 }
