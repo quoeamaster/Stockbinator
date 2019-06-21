@@ -1,4 +1,8 @@
-{"price": 50, "price_fluctuation": "35-65", "volume": "500 Million", "trx_date": "2019-06-19T18:00:00+08:00", "stock_id": "700_tencent" }
-{"price_fluctuation": "85-115", "volume": "1000 Million", "trx_date": "2019-06-20T18:00:00+08:00", "stock_id": "700_tencent", "price": 100 }
-{"price": 150, "price_fluctuation": "135-165", "volume": "1500 Million", "trx_date": "2019-06-21T18:00:00+08:00", "stock_id": "700_tencent" }
-{"price": 200, "price_fluctuation": "185-215", "volume": "2000 Million", "trx_date": "2019-06-22T18:00:00+08:00", "stock_id": "700_tencent" }
+{"volume": "500 Million", "trx_date": "2019-06-21T19:00:00+08:00", "stock_id": "700_tencent", "price": 50, "price_fluctuation": "35-65" }
+{"stock_id": "700_tencent", "price": 100, "price_fluctuation": "85-115", "volume": "1000 Million", "trx_date": "2019-06-22T19:00:00+08:00" }
+{"price": 150, "price_fluctuation": "135-165", "volume": "1500 Million", "trx_date": "2019-06-23T19:00:00+08:00", "stock_id": "700_tencent" }
+{"trx_date": "2019-06-24T19:00:00+08:00", "stock_id": "700_tencent", "price": 200, "price_fluctuation": "185-215", "volume": "2000 Million" }
+{"price": 354.4, "price_fluctuation": "349.000-357.400", "volume": "70.95億", "stock_id": "700_tencent", "trx_date": "2019-06-21T11:00:00+00:00" }
+{"price": 4.36, "price_fluctuation": "4.350-4.410", "volume": "5.81億", "stock_id": "857_petrol_china_oil", "trx_date": "2019-06-21T11:00:00+00:00" }
+{"stock_id": "1299_aia", "trx_date": "2019-06-21T11:00:00+00:00", "price": 82.7, "price_fluctuation": "81.900-82.700", "volume": "20.01億" }
+{"price_fluctuation": "6.550-6.620", "volume": "26.89億", "stock_id": "939_construction_bank_cn", "trx_date": "2019-06-21T11:00:00+00:00", "price": 6.57 }

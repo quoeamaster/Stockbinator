@@ -13,6 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+// basic filestore - implements interface IStore.
+// ONLY provide 3 functions and the rest functions are not implemented
+// functions implemented:
+// a. Persist
+// b. ReadAll
+// c. RemoveAll
 package store
 
 import (
@@ -22,6 +28,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/micro/go-config"
+	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
@@ -58,7 +65,7 @@ func NewStructFilestore(config config.Config, filename string) (pStore *StructFi
 // save all data into the store
 func (s *StructFilestore) Persist(data map[string]StructStoreValue) (response StructStoreResponse, err error) {
 	response = s.newStructStoreResponse(CodeSuccess, "")
-	pFile, err := os.OpenFile(s.filepath, os.O_APPEND|os.O_WRONLY, 0666)
+	pFile, err := os.OpenFile(s.filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 	// dtor
 	defer func() {
 		err2 := pFile.Close()
@@ -82,32 +89,61 @@ func (s *StructFilestore) Persist(data map[string]StructStoreValue) (response St
 	// write to file
 	_, err = pFile.WriteString(jsonValue)
 	if err != nil {
-		fmt.Println("haha... expected")
 		return
 	}
-	_, err = pFile.Seek(int64(len(jsonValue) + 1), 0)
-	if err != nil {
-		return
-	}
+	// goto the last byte's position for appending (might not be necessary now
+	//_, err = pFile.Seek(int64(len(jsonValue) + 1), 0)
+	//if err != nil {
+	//	return
+	//}
 	return
 }
 
 // read all contents from the store (might be an issue when the content size is HUGE
 func (s *StructFilestore) ReadAll() (response StructStoreResponse, content string, err error) {
+	response = s.newStructStoreResponse(CodeSuccess, "")
+	pFile, err := os.OpenFile(s.filepath, os.O_RDONLY, 0666)
+	// dtor
+	defer func() {
+		err2 := pFile.Close()
+		// do not shadow the original error
+		if err == nil && err2 != nil {
+			err = err2
+			s.handleCommonErrorForResponse(&response, err)
+			return
+		}
+	}()
+	if err != nil {
+		s.handleCommonErrorForResponse(&response, err)
+		return
+	}
+	// read all contents
+	bContents, err := ioutil.ReadAll(pFile)
+	if err != nil {
+		s.handleCommonErrorForResponse(&response, err)
+		return
+	}
+	content = string(bContents)
 	return
 }
 // read only the content associated by the KEY, PARAMS contains additional information for the read operation
 func (s *StructFilestore) ReadByKey(key string, params interface{}) (response StructStoreResponse, value StructStoreValue, err error) {
+	// TODO: NON implemented (hence always return SUCCESS but empty value
+	response = s.newStructStoreResponse(CodeSuccess, "")
 	return
 }
 
 // modify the value associated with the key
 func (s *StructFilestore) ModifyByKey(key string, value StructStoreValue) (response StructStoreResponse, err error) {
+	// TODO: NON implemented (hence always return SUCCESS but empty value
+	response = s.newStructStoreResponse(CodeSuccess, "")
 	return
 }
 
 // remove value associated with the key
 func (s *StructFilestore) RemoveByKey(key string) (response StructStoreResponse, valueRemoved StructStoreValue, err error) {
+	// TODO: NON implemented (hence always return SUCCESS but empty value
+	response = s.newStructStoreResponse(CodeSuccess, "")
 	return
 }
 // remove all data in the store, be careful~ For file-store case, the file would not be removed,

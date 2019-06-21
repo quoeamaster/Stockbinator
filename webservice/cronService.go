@@ -16,8 +16,10 @@
 package webservice
 
 import (
+	"Stockbinator/common"
 	"Stockbinator/config"
 	"Stockbinator/crawler"
+	"Stockbinator/store"
 	"Stockbinator/util"
 	"bytes"
 	"errors"
@@ -277,7 +279,8 @@ func (c *StructCron) RunCron() (err error)  {
 								// TODO might need to run in parallel?? though in this case not that important
 								// use a factory method to return a crawler instance suitable for the crawl (with caching)
 								iCrawler := crawler.GetCrawler(stockModuleKey, c.pCfg.ModuleConfigs)
-								err2 := iCrawler.Crawl(stockModuleKey)
+								storeList, err2 := c.getStoreList(stockModuleKey)
+								err2 = iCrawler.Crawl(stockModuleKey, storeList)
 								if err2 != nil {
 									err = err2
 									return
@@ -290,6 +293,27 @@ func (c *StructCron) RunCron() (err error)  {
 			}
 		}()
 	}
+	return
+}
+
+func (c *StructCron) getStoreList(stockModuleKey string) (storeList []store.IStore, err error) {
+	// stockModuleKey => stock_aastocks.939_construction_bank_cn
+	storeList = make([]store.IStore, 0)
+
+	// need filestore???
+	fRepo := c.pCfg.AppConfig.Get(common.ConfigKeyStoreFile, common.ConfigKeyRepo).String("")
+	if !util.IsEmptyString(fRepo) {
+		filepath := fmt.Sprintf("%v.%v", common.ConfigKeyStoreFile, stockModuleKey)
+		iStore, err2 := store.GetStoreByKey(filepath, c.pCfg.AppConfig, nil)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		storeList = append(storeList, iStore)
+	}
+	// need datastore???
+	// TODO: tbd
+
 	return
 }
 

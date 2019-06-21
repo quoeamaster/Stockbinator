@@ -17,12 +17,22 @@ package crawler
 
 import (
 	"Stockbinator/config"
+	"Stockbinator/store"
 	"Stockbinator/util"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
+)
+
+const (
+	aastocksKeyPrice = "price"
+	aastocksKeyPriceFluctuation = "price_fluctuation"
+	aastocksKeyVolume = "volume"
+	aastocksKeyTrxDate = "trx_date"
+	aastocksKeyStockId = "stock_id"
 )
 
 type StructAAStocksCrawler struct {
@@ -39,7 +49,7 @@ func NewStructAAStocksCrawler(config map[string]config.StructStockModuleConfig) 
 	return
 }
 
-func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
+func (s *StructAAStocksCrawler) Crawl(moduleKey string, storeList []store.IStore) (err error) {
 	names := strings.Split(moduleKey, ".")
 	if names != nil && len(names) == 2 {
 		stockModuleConfig := s.StockModuleConfig[names[0]]
@@ -81,11 +91,37 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string) (err error) {
 			err = err2
 			return
 		}
-		// TODO: save the scrapped value into a STORE (e.g. file-store or elasticsearch-store)
-		fmt.Println(valPrice)
-		fmt.Println(valPriceFluctuations)
-		fmt.Println(valTrxAmount)
+		// save the scrapped value into a STORE (e.g. file-store or elasticsearch-store)
+		storeMap := make(map[string]store.StructStoreValue)
+		fVal, err2 := strconv.ParseFloat(valPrice, 64)
+		if err2 != nil {
+			err = err2
+			return
+		}
+		// utc, truncated to hour level
+		now =now.In(time.UTC).Truncate(time.Hour)
+		storeMap[aastocksKeyPrice] = *store.NewStructStoreValue(
+			aastocksKeyPrice, fVal, store.TypeFloat, false, false)
+		storeMap[aastocksKeyPriceFluctuation] = *store.NewStructStoreValue(
+			aastocksKeyPriceFluctuation, valPriceFluctuations, store.TypeString, false, false)
+		storeMap[aastocksKeyVolume] = *store.NewStructStoreValue(
+			aastocksKeyVolume, valTrxAmount, store.TypeString, false, false)
+		storeMap[aastocksKeyStockId] = *store.NewStructStoreValue(
+			aastocksKeyStockId, names[1], store.TypeString, false, false)
+		storeMap[aastocksKeyTrxDate] = *store.NewStructStoreValue(
+			aastocksKeyTrxDate, now, store.TypeDate, false, false)
 
+		for _, iStore := range storeList {
+			resp, err2 := iStore.Persist(storeMap)
+			if err2 != nil {
+				err = err2
+				return
+			}
+			if resp.Code != store.CodeSuccess {
+				err = errors.New(fmt.Sprintf("(%v) - %v", resp.Code, resp.Message))
+				return
+			}
+		}	// end -- for (all store persist operation)
 
 	} else {
 		err = errors.New("invalid moduleKey, it should be [STOCKS_MODULE_NAME][STOCK_CODE_UNDER_THE_MODULE]")

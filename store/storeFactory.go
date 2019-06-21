@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/micro/go-config"
+	"strings"
 )
 
 // internal storage (map) for the store implementation(s)
@@ -36,25 +37,33 @@ func GetStoreByKey(key string, config config.Config, params... map[string]interf
 	if storeCache == nil {
 		storeCache = make(map[string]IStore)
 	}
+	// key MUST be... starting with either "filestore.x.y" or "datastore.x.y"
 	store = storeCache[key]
 	if store == nil {
 		// try to create store that are recognizable
-		switch key {
-		case common.ConfigKeyStoreFile:
+		isFilestore := strings.Index(key, common.ConfigKeyStoreFile) == 0
+		isDatastore := strings.Index(key, common.ConfigKeyStoreData) == 0
+
+		if isFilestore {
 			filename := common.StoreDefaultDateFilename
-			if params != nil {
-				interfaceFilename := params[0][common.StoreKeyDefaultDateFilename]
-				if interfaceFilename != nil {
-					filename = interfaceFilename.(string)
-				} // end -- if (interface-filename from map is non nil)
-			}
+			filename = key[len(common.ConfigKeyStoreFile)+1:]
+			// PS. might need to use params... but in this nope
+			//if params != nil {
+			//	interfaceFilename := params[0][common.StoreKeyDefaultDateFilename]
+			//	if interfaceFilename != nil {
+			//		filename = interfaceFilename.(string)
+			//	} // end -- if (interface-filename from map is non nil)
+			//}
+fmt.Println("*** filename", filename)
+fmt.Println("*** key", key)
 			store = NewStructFilestore(config, filename)
 			storeCache[key] = store
-		// TODO: add other store(s) like datastore
-		default:
+		} else if isDatastore {
+			// TODO: add other store(s) like datastore
+		} else {
 			store = nil
 			err = errors.New(fmt.Sprintf("unknown Store type => %v", key))
 		}
-	}
+	} // end -- if (store is nil, create one if recognized)
 	return
 }

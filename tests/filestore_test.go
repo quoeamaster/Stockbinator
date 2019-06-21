@@ -17,7 +17,9 @@ package tests
 
 import (
 	"Stockbinator/store"
+	"Stockbinator/util"
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -45,6 +47,28 @@ func TestFilestorePersistFlow(t *testing.T) {
 			t.Fatal(err.Error())
 		}
 		helperFilestoreFlowsCommonResponseHandler(resp, t)
+	}
+
+	LogTestOutput("TestFilestorePersistFlow", "c. retrieve all contents just written")
+	resp, contents, err := FileStore.ReadAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.Code != store.CodeSuccess {
+		LogTestOutput("TestFilestorePersistFlow",
+			fmt.Sprintf("read operation returned non success code - %v; msg > %v", resp.Code, resp.Message))
+		t.Fatal(fmt.Sprintf("read operation returned non success code - %v; msg > %v", resp.Code, resp.Message))
+	}
+	if util.IsEmptyString(contents) {
+		t.Fatal("expected contents READ should be non EMPTY!")
+	}
+	// kind of weird... there is 1 additional line feed... (???)
+	lines := strings.Split(contents, "\n")
+	if lines == nil || len(lines) != (4 + 1) {
+		for i, line := range lines {
+			LogTestOutput("TestFilestorePersistFlow", fmt.Sprintf("%v - %v", i, line))
+		}
+		t.Fatal(fmt.Sprintf("expecting contents to be in 4 lines of data BUT got %v", len(lines)))
 	}
 
 

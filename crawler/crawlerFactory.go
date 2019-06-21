@@ -17,12 +17,13 @@ package crawler
 
 import (
 	"Stockbinator/config"
+	"Stockbinator/store"
 	"strings"
 )
 
 // interface defining crawler behavior.
 type InterfaceCrawler interface {
-	Crawl(moduleKey string) (err error)
+	Crawl(moduleKey string, storeList []store.IStore) (err error)
 }
 
 // * ************************************* *

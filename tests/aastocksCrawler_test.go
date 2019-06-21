@@ -16,6 +16,7 @@
 package tests
 
 import (
+	"Stockbinator/store"
 	"testing"
 )
 
@@ -34,8 +35,12 @@ func TestAAStocksCrawlerCrawl(t *testing.T)  {
 		{ "stock_aastocks.939_construction_bank_cn" },
 	}
 
+	storeList := make([]store.IStore, 0)
+	if FileStore != nil {
+		storeList = append(storeList, FileStore)
+	}
 	for _, sCode := range stockCodes {
-		err := instanceStructCrawlerTestObjects.pCrawlerAAStocks.Crawl(sCode.moduleKey)
+		err := instanceStructCrawlerTestObjects.pCrawlerAAStocks.Crawl(sCode.moduleKey, storeList)
 		if err != nil {
 			t.Errorf("[TestAAStocksCrawlerCrawl] exception: %v", err)
 		}

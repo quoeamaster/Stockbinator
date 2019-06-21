@@ -65,6 +65,7 @@ func TestMain(m *testing.M) {
 
 		setupCrawlerAAStocks()
 		setupCrawlerGeneric()
+
 	} else if *pFlagAAStocksCrawler {
 		err = setupStockModuleConfig()
 		handlerCommonError(err)
@@ -73,6 +74,9 @@ func TestMain(m *testing.M) {
 		handlerCommonError(err)
 
 		setupCrawlerAAStocks()
+		// filestore is a dependency
+		setupFilestore()
+
 	} else if *pFlagGenericCrawler {
 		err = setupStockModuleConfig()
 		handlerCommonError(err)
@@ -154,58 +158,64 @@ var TestFilestoreEntriesList = make([]map[string]store.StructStoreValue, 5)
 // corresponding setupXXX methods
 
 func setupSharableStore() (err error) {
-	// setup the config
-	SharableStoreConfig = config2.NewConfig()
-	cfgPath := file.NewSource(file.WithPath("../config/app_test.toml"))
-	err = SharableStoreConfig.Load(cfgPath)
-	handlerCommonError(err)
-
+	if SharableStoreConfig == nil {
+		// setup the config
+		SharableStoreConfig = config2.NewConfig()
+		cfgPath := file.NewSource(file.WithPath("../config/app_test.toml"))
+		err = SharableStoreConfig.Load(cfgPath)
+		handlerCommonError(err)
+	}
 	return
 }
 
 func setupFilestore()  {
-	// using the default store's filename...
-	FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
-	// setup filestore entries too
-	for i := 0; i < len(TestFilestoreEntriesList); i++ {
-		dataRow := make(map[string]store.StructStoreValue)
-
-		pDataPrice := new(store.StructStoreValue)
-		pDataPrice.Type = store.TypeFloat
-		pDataPrice.Value = float64((i + 1)*50)
-		dataRow["price"] = *pDataPrice
-
-		pPriceRange := new(store.StructStoreValue)
-		pPriceRange.Type = store.TypeString
-		pPriceRange.Value = fmt.Sprintf("%v-%v", (i + 1)*50-15, (i + 1)*50+15)
-		dataRow["price_fluctuation"] = *pPriceRange
-
-		pVol := new(store.StructStoreValue)
-		pVol.Type = store.TypeString
-		pVol.Value = fmt.Sprintf("%v Million", (i + 1)*500)
-		dataRow["volume"] = *pVol
-
-		pDate := new(store.StructStoreValue)
-		pDate.Type = store.TypeDate
-		if i != 4 {
-			currentTime := time.Now()
-			for j := 0; j < i; j++ {
-				currentTime = currentTime.Add(time.Hour * 24)
-			}
-			pDate.Value = currentTime.Truncate(time.Hour)
-
-		} else {
-			pDate.Value = time.Now().Truncate(time.Hour)
-		}
-		dataRow["trx_date"] = *pDate
-
-		pStockId := new(store.StructStoreValue)
-		pStockId.Type = store.TypeString
-		pStockId.Value = "700_tencent"
-		dataRow["stock_id"] = *pStockId
-
-		TestFilestoreEntriesList[i] = dataRow
+	if FileStore == nil {
+		// using the default store's filename...
+		setupSharableStore()
+		FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
 	}
+	if TestFilestoreEntriesList == nil || len(TestFilestoreEntriesList) == 0 || TestFilestoreEntriesList[0] == nil {
+		// setup filestore entries too
+		for i := 0; i < len(TestFilestoreEntriesList); i++ {
+			dataRow := make(map[string]store.StructStoreValue)
+
+			pDataPrice := new(store.StructStoreValue)
+			pDataPrice.Type = store.TypeFloat
+			pDataPrice.Value = float64((i + 1)*50)
+			dataRow["price"] = *pDataPrice
+
+			pPriceRange := new(store.StructStoreValue)
+			pPriceRange.Type = store.TypeString
+			pPriceRange.Value = fmt.Sprintf("%v-%v", (i + 1)*50-15, (i + 1)*50+15)
+			dataRow["price_fluctuation"] = *pPriceRange
+
+			pVol := new(store.StructStoreValue)
+			pVol.Type = store.TypeString
+			pVol.Value = fmt.Sprintf("%v Million", (i + 1)*500)
+			dataRow["volume"] = *pVol
+
+			pDate := new(store.StructStoreValue)
+			pDate.Type = store.TypeDate
+			if i != 4 {
+				currentTime := time.Now()
+				for j := 0; j < i; j++ {
+					currentTime = currentTime.Add(time.Hour * 24)
+				}
+				pDate.Value = currentTime.Truncate(time.Hour)
+
+			} else {
+				pDate.Value = time.Now().Truncate(time.Hour)
+			}
+			dataRow["trx_date"] = *pDate
+
+			pStockId := new(store.StructStoreValue)
+			pStockId.Type = store.TypeString
+			pStockId.Value = "700_tencent"
+			dataRow["stock_id"] = *pStockId
+
+			TestFilestoreEntriesList[i] = dataRow
+		}
+	} // end -- if (setup TestFilestoreEntriesList)
 }
 
 func setupStockModuleConfig() (err error) {
@@ -235,22 +245,25 @@ func setupStockModuleConfig() (err error) {
 }
 
 func setupHoliday2018Config() (err error) {
-	Holidays2018Config = config2.NewConfig()
-	fSrc := file.NewSource(file.WithPath("../config/holidays_2018.toml"))
-	err = Holidays2018Config.Load(fSrc)
-	if err != nil {
-		fmt.Printf("could not load the holidays_2018.toml, %v\n", err)
-		return
+	if Holidays2018Config == nil {
+		Holidays2018Config = config2.NewConfig()
+		fSrc := file.NewSource(file.WithPath("../config/holidays_2018.toml"))
+		err = Holidays2018Config.Load(fSrc)
+		if err != nil {
+			fmt.Printf("could not load the holidays_2018.toml, %v\n", err)
+			return
+		}
 	}
 	return
 }
 
 func setupCrawlerTestObjects() (err error)  {
-	// add setup code here
-	instanceStructCrawlerTestObjects = new(StructCrawlerTestObjects)
-	instanceStructCrawlerTestObjects.ConfigMap = make(map[string]config.StructStockModuleConfig)
-	instanceStructCrawlerTestObjects.ConfigMap[stockModuleName] = SharableStockModuleConfig
-
+	if instanceStructCrawlerTestObjects == nil {
+		// add setup code here
+		instanceStructCrawlerTestObjects = new(StructCrawlerTestObjects)
+		instanceStructCrawlerTestObjects.ConfigMap = make(map[string]config.StructStockModuleConfig)
+		instanceStructCrawlerTestObjects.ConfigMap[stockModuleName] = SharableStockModuleConfig
+	}
 	return
 }
 func setupCrawlerAAStocks() {

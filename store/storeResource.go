@@ -46,6 +46,17 @@ type StructStoreValue struct {
 	Key      string
 }
 
+// helper method to construct a StructStoreValue object
+func NewStructStoreValue(key string, value interface{}, valueType int, isArray, isObject bool) (val *StructStoreValue) {
+	val = new(StructStoreValue)
+	val.Key = key
+	val.Value = value
+	val.Type = valueType
+	val.IsObject = isObject
+	val.IsArray = isArray
+	return
+}
+
 // structure to describe a response from store implementor
 type StructStoreResponse struct {
 	Code    int
