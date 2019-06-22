@@ -59,8 +59,9 @@ func NewStructStoreValue(key string, value interface{}, valueType int, isArray, 
 
 // structure to describe a response from store implementor
 type StructStoreResponse struct {
-	Code    int
-	Message string
+	Code           int
+	Message        string
+	AdditionalCode int
 }
 
 // interface for "store"

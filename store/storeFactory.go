@@ -54,8 +54,6 @@ func GetStoreByKey(key string, config config.Config, params... map[string]interf
 			//		filename = interfaceFilename.(string)
 			//	} // end -- if (interface-filename from map is non nil)
 			//}
-fmt.Println("*** filename", filename)
-fmt.Println("*** key", key)
 			store = NewStructFilestore(config, filename)
 			storeCache[key] = store
 		} else if isDatastore {

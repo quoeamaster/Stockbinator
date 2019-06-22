@@ -25,6 +25,7 @@ func TestAAStocksCrawlerCrawl(t *testing.T)  {
 	if !*pFlagAAStocksCrawler && !*pFlagCrawler {
 		t.SkipNow()
 	}
+	LogTestOutput("TestAAStocksCrawlerCrawl", "** start test **")
 	// table test for several different stock-code(s)
 	var stockCodes = []struct{
 		moduleKey string
@@ -45,4 +46,5 @@ func TestAAStocksCrawlerCrawl(t *testing.T)  {
 			t.Errorf("[TestAAStocksCrawlerCrawl] exception: %v", err)
 		}
 	}
+	LogTestOutput("TestAAStocksCrawlerCrawl", "** end test **\n")
 }

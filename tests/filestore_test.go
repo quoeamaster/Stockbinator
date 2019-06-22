@@ -38,8 +38,8 @@ func TestFilestorePersistFlow(t *testing.T) {
 
 	LogTestOutput("TestFilestorePersistFlow", "b. add a few entries to the test file")
 	// write 1st 4 entries; leave the last entry for modification
-	for i := 0; i<len(TestFilestoreEntriesList)-1; i++ {
-		entryMap := TestFilestoreEntriesList[i]
+	for i := 0; i<len(TestStoreEntriesList)-1; i++ {
+		entryMap := TestStoreEntriesList[i]
 		// LogTestOutput("TestFilestorePersistFlow", fmt.Sprintf("index %v => %v", i, entryMap))
 		resp, err = FileStore.Persist(entryMap)
 		if err != nil {

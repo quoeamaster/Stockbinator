@@ -153,7 +153,7 @@ var Holidays2018Config config2.Config
 var SharableStoreConfig config2.Config
 var FileStore store.IStore
 // 5 entries for the file-store to write / update
-var TestFilestoreEntriesList = make([]map[string]store.StructStoreValue, 5)
+var TestStoreEntriesList = make([]map[string]store.StructStoreValue, 5)
 
 // corresponding setupXXX methods
 
@@ -174,9 +174,9 @@ func setupFilestore()  {
 		setupSharableStore()
 		FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
 	}
-	if TestFilestoreEntriesList == nil || len(TestFilestoreEntriesList) == 0 || TestFilestoreEntriesList[0] == nil {
+	if TestStoreEntriesList == nil || len(TestStoreEntriesList) == 0 || TestStoreEntriesList[0] == nil {
 		// setup filestore entries too
-		for i := 0; i < len(TestFilestoreEntriesList); i++ {
+		for i := 0; i < len(TestStoreEntriesList); i++ {
 			dataRow := make(map[string]store.StructStoreValue)
 
 			pDataPrice := new(store.StructStoreValue)
@@ -213,9 +213,9 @@ func setupFilestore()  {
 			pStockId.Value = "700_tencent"
 			dataRow["stock_id"] = *pStockId
 
-			TestFilestoreEntriesList[i] = dataRow
+			TestStoreEntriesList[i] = dataRow
 		}
-	} // end -- if (setup TestFilestoreEntriesList)
+	} // end -- if (setup TestStoreEntriesList)
 }
 
 func setupStockModuleConfig() (err error) {

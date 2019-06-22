@@ -271,7 +271,7 @@ func (c *StructCron) RunCron() (err error)  {
 				// currentTimeUTC := currentTime.In(time.UTC).Format(util.CommonDateFormat)
 				// fmt.Println(currentTimeUTC)
 				currentTimeUTC := currentTime.In(time.UTC)
-				for _, cronTimeEntry := range c.cronTimeEntries {
+				for entryKey, cronTimeEntry := range c.cronTimeEntries {
 					if !cronTimeEntry.isJobRunning {
 						if currentTimeUTC.Equal(cronTimeEntry.UTCTime) || currentTimeUTC.After(cronTimeEntry.UTCTime) {
 							cronTimeEntry.isJobRunning = true
@@ -286,7 +286,17 @@ func (c *StructCron) RunCron() (err error)  {
 									return
 								}
 							} // end -- for (all stock module involved run)
-							// TODO update the cron-time entries to tomorrow
+							// update the cron-time entries to tomorrow
+							tmrCronEntry := c.cronTimeEntries[entryKey]
+							delete(c.cronTimeEntries, entryKey)
+
+							tmrCronEntry.UTCTime = tmrCronEntry.UTCTime.Add(time.Hour * 24)
+							tmrCronEntry.isJobRunning = false
+							dTmrTime, _ := time.Parse(util.CommonDateFormat, tmrCronEntry.DisplayName)
+							tmrCronEntry.DisplayName = dTmrTime.Add(time.Hour * 24).Format(util.CommonDateFormat)
+
+							tomorrowKey := tmrCronEntry.UTCTime.Format(util.CommonDateFormat)
+							c.cronTimeEntries[tomorrowKey] = tmrCronEntry
 						}
 					} // end -- if (job running)??
 				}
@@ -324,10 +334,6 @@ func (c *StructCron) StopCron() (err error) {
 	}
 	return
 }
-
-// TODO add a new method for running the cron loop (tick) and
-//  do crawling by calling StructGenericCrawler
-
 
 
 

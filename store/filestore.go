@@ -64,7 +64,7 @@ func NewStructFilestore(config config.Config, filename string) (pStore *StructFi
 
 // save all data into the store
 func (s *StructFilestore) Persist(data map[string]StructStoreValue) (response StructStoreResponse, err error) {
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusAvailable)
 	pFile, err := os.OpenFile(s.filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 	// dtor
 	defer func() {
@@ -72,12 +72,12 @@ func (s *StructFilestore) Persist(data map[string]StructStoreValue) (response St
 		// do not shadow the original error
 		if err == nil && err2 != nil {
 			err = err2
-			s.handleCommonErrorForResponse(&response, err)
+			s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 			return
 		}
 	}()
 	if err != nil {
-		s.handleCommonErrorForResponse(&response, err)
+		s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 		return
 	}
 	// write the values (json in 1 line)
@@ -101,7 +101,7 @@ func (s *StructFilestore) Persist(data map[string]StructStoreValue) (response St
 
 // read all contents from the store (might be an issue when the content size is HUGE
 func (s *StructFilestore) ReadAll() (response StructStoreResponse, content string, err error) {
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusAvailable)
 	pFile, err := os.OpenFile(s.filepath, os.O_RDONLY, 0666)
 	// dtor
 	defer func() {
@@ -109,18 +109,18 @@ func (s *StructFilestore) ReadAll() (response StructStoreResponse, content strin
 		// do not shadow the original error
 		if err == nil && err2 != nil {
 			err = err2
-			s.handleCommonErrorForResponse(&response, err)
+			s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 			return
 		}
 	}()
 	if err != nil {
-		s.handleCommonErrorForResponse(&response, err)
+		s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 		return
 	}
 	// read all contents
 	bContents, err := ioutil.ReadAll(pFile)
 	if err != nil {
-		s.handleCommonErrorForResponse(&response, err)
+		s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 		return
 	}
 	content = string(bContents)
@@ -129,27 +129,27 @@ func (s *StructFilestore) ReadAll() (response StructStoreResponse, content strin
 // read only the content associated by the KEY, PARAMS contains additional information for the read operation
 func (s *StructFilestore) ReadByKey(key string, params interface{}) (response StructStoreResponse, value StructStoreValue, err error) {
 	// TODO: NON implemented (hence always return SUCCESS but empty value
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusUnknown)
 	return
 }
 
 // modify the value associated with the key
 func (s *StructFilestore) ModifyByKey(key string, value StructStoreValue) (response StructStoreResponse, err error) {
 	// TODO: NON implemented (hence always return SUCCESS but empty value
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusUnknown)
 	return
 }
 
 // remove value associated with the key
 func (s *StructFilestore) RemoveByKey(key string) (response StructStoreResponse, valueRemoved StructStoreValue, err error) {
 	// TODO: NON implemented (hence always return SUCCESS but empty value
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusUnknown)
 	return
 }
 // remove all data in the store, be careful~ For file-store case, the file would not be removed,
 // ONLY contents would be truncated
 func (s *StructFilestore) RemoveAll() (response StructStoreResponse, err error) {
-	response = s.newStructStoreResponse(CodeSuccess, "")
+	response = s.newStructStoreResponse(CodeSuccess, "", common.FileStatusAvailable)
 
 	exists, err := util.IsFileExists(s.filepath)
 	if exists {
@@ -161,43 +161,45 @@ func (s *StructFilestore) RemoveAll() (response StructStoreResponse, err error) 
 			// do not shadow the original error
 			if err == nil && err3 != nil {
 				err = err3
-				s.handleCommonErrorForResponse(&response, err)
+				s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 				return
 			}
 		}()
 		if err2 != nil {
 			err = err2
-			s.handleCommonErrorForResponse(&response, err)
+			s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 			return
 		}
 		err2 = pFile.Truncate(0)
 		if err2 != nil {
 			err = err2
-			s.handleCommonErrorForResponse(&response, err)
+			s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 			return
 		}
 		// change pointer back to the 1st character space (Beginning-Of-File)
 		_, err2 = pFile.Seek(0 ,0)
 		if err2 != nil {
 			err = err2
-			s.handleCommonErrorForResponse(&response, err)
+			s.handleCommonErrorForResponse(&response, err, common.FileStatusUnknown)
 			return
 		}
 	}
 	return
 }
 
-func (s *StructFilestore) newStructStoreResponse(code int, message string) (response StructStoreResponse) {
+func (s *StructFilestore) newStructStoreResponse(code int, message string, additionalCode int) (response StructStoreResponse) {
 	response = *new(StructStoreResponse)
 	response.Code = code
 	response.Message = message
+	response.AdditionalCode = additionalCode
 	return
 }
 
-func (s *StructFilestore) handleCommonErrorForResponse(pResponseStruct *StructStoreResponse, err error) {
+func (s *StructFilestore) handleCommonErrorForResponse(pResponseStruct *StructStoreResponse, err error, additionalStatus int) {
 	if pResponseStruct != nil && err != nil {
 		pResponseStruct.Code = CodeFailure
 		pResponseStruct.Message = err.Error()
+		pResponseStruct.AdditionalCode = additionalStatus
 	}
 }
 
