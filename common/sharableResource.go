@@ -42,4 +42,9 @@ const (
 	FileStatusNotAvailable = 404
 	FileStatusLocked       = 401
 	FileStatusUnknown      = 500
+
+	// filename for the file-logger
+	LoggerFileInfoKeyFilename = "filename"
+	// full filepath for the file-logger
+	LoggerFileInfoKeyFilepath = "filepath"
 )

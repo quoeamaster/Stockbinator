@@ -45,6 +45,8 @@ var (
 
 	// flag indicating logging feature
 	pFlagLog = flag.Bool("log", false, "display logs about the test")
+
+	pFlagFileLogger = flag.Bool("log.file", false, "run ONLY file-logger test")
 )
 
 // Testing method
@@ -104,10 +106,15 @@ func TestMain(m *testing.M) {
 
 	// filestore series
 	if *pFlagFilestore {
-		err = setupSharableStore()
+		err = setupSharableStoreConfig()
 		handlerCommonError(err)
 
 		setupFilestore()
+	}
+
+	if *pFlagFileLogger {
+		err = setupSharableStoreConfig()
+		handlerCommonError(err)
 	}
 
 	// TODO: add other test setup
@@ -157,7 +164,7 @@ var TestStoreEntriesList = make([]map[string]store.StructStoreValue, 5)
 
 // corresponding setupXXX methods
 
-func setupSharableStore() (err error) {
+func setupSharableStoreConfig() (err error) {
 	if SharableStoreConfig == nil {
 		// setup the config
 		SharableStoreConfig = config2.NewConfig()
@@ -171,7 +178,7 @@ func setupSharableStore() (err error) {
 func setupFilestore()  {
 	if FileStore == nil {
 		// using the default store's filename...
-		setupSharableStore()
+		setupSharableStoreConfig()
 		FileStore = store.NewStructFilestore(SharableStoreConfig, common.StoreDefaultDateFilename)
 	}
 	if TestStoreEntriesList == nil || len(TestStoreEntriesList) == 0 || TestStoreEntriesList[0] == nil {

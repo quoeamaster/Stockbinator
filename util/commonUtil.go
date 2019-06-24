@@ -67,6 +67,22 @@ func IsFileExists(filePath string) (exists bool, err error) {
 	return
 }
 
+func IsFolderExists(filePath string) (exists bool, err error) {
+	exists = false
+
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		return
+	}
+	// non directory? great
+	if fileInfo.IsDir() == true {
+		exists = true
+		return
+	}
+	// unknown situation; however treated as non-exists
+	return
+}
+
 // get back only matched folders under a given path;
 // matching criteria is the folder starts with the given folder-prefix
 func ListMatchingFoldersUnderPath(repoPath string, folderPrefix string) (matchedFolderPaths []string, err error) {
