@@ -87,31 +87,9 @@ func (l *StructFileLogger) prepareFilename(config *StructLoggerConfig) (name str
 		finalPattern = config.FilenameTimebasedPattern
 	}
 	// substitute the pattern with real date parts
-	finalPattern = l.prepareTimebasedPattern(finalPattern)
+	finalPattern = util.PrepareTimebasedPatternWithGivenTime(finalPattern, time.Now())
 	// concat the filename with the pattern
 	name = fmt.Sprintf("%v-%v", config.Filename, finalPattern)
-	return
-}
-
-func (l *StructFileLogger) prepareTimebasedPattern(pattern string) (v string) {
-	now := time.Now()
-
-	v = strings.Replace(pattern, "yyyy", fmt.Sprintf("%v", now.Year()), -1)
-	if strings.Index(v, "yy") != -1 {
-		v = strings.Replace(v, "yy", fmt.Sprintf("%v", now.Year())[2:], -1)
-	}
-	mm := int(now.Month())
-	if mm < 10 {
-		v = strings.Replace(v, "mm", fmt.Sprintf("0%v", mm), -1)
-	} else {
-		v = strings.Replace(v, "mm", fmt.Sprintf("%v", mm), -1)
-	}
-	dd := now.Day()
-	if dd < 10 {
-		v = strings.Replace(v, "dd", fmt.Sprintf("0%v", dd), -1)
-	} else {
-		v = strings.Replace(v, "dd", fmt.Sprintf("%v", dd), -1)
-	}
 	return
 }
 

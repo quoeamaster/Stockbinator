@@ -352,4 +352,23 @@ func ParseEnvVar(key string) (matches []string, matchesIndex [][]int,  err error
 	return
 }
 
-
+// helper method to replace the time pattern string with the given time's values
+func PrepareTimebasedPatternWithGivenTime(pattern string, givenTime time.Time) (v string) {
+	v = strings.Replace(pattern, "yyyy", fmt.Sprintf("%v", givenTime.Year()), -1)
+	if strings.Index(v, "yy") != -1 {
+		v = strings.Replace(v, "yy", fmt.Sprintf("%v", givenTime.Year())[2:], -1)
+	}
+	mm := int(givenTime.Month())
+	if mm < 10 {
+		v = strings.Replace(v, "mm", fmt.Sprintf("0%v", mm), -1)
+	} else {
+		v = strings.Replace(v, "mm", fmt.Sprintf("%v", mm), -1)
+	}
+	dd := givenTime.Day()
+	if dd < 10 {
+		v = strings.Replace(v, "dd", fmt.Sprintf("0%v", dd), -1)
+	} else {
+		v = strings.Replace(v, "dd", fmt.Sprintf("%v", dd), -1)
+	}
+	return
+}

@@ -23,3 +23,6 @@ config/*.toml
 # compiled executable
 Stockbinator
 
+# fileLogger's log file(s)
+config/file.log-*
+
