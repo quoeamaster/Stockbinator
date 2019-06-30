@@ -24,8 +24,11 @@ import (
 	"fmt"
 	"github.com/emicklei/go-restful"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 )
 
 const moduleServer = "server."
@@ -36,6 +39,8 @@ type Server struct {
 	pCfg *config.StructConfig
 	// Cron service
 	pCronSrv *webservice.StructCron
+	// channel
+	signalChannel chan os.Signal
 }
 
 
@@ -125,10 +130,43 @@ func (s *Server) Start() (err error) {
 		return
 	}
 
+	// start signal listener
+	err = s.startSignalListener()
+	if err != nil {
+		s.logInfo("Start", "failed to setup signal listener, exit the server process")
+		return
+	}
 	// start Http service
 	s.logInfo("Start", "server started at port => 9000")
 	err = http.ListenAndServe(":9000", nil)
 
+	return
+}
+
+// added signal listener; hence command such as "kill {process_id}" is issued, the signal would be caught and could run
+// the corresponding close() method(s)
+func (s *Server) startSignalListener() (err error) {
+	s.signalChannel = make(chan os.Signal)
+	signal.Notify(s.signalChannel, syscall.SIGABRT, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGSTOP)
+	go func() {
+		for signal := range s.signalChannel {
+			switch signal {
+			case syscall.SIGTERM:
+				fallthrough
+			case syscall.SIGINT:
+				fallthrough
+			case syscall.SIGKILL:
+				fallthrough
+			case syscall.SIGQUIT:
+				err2 := s.Stop()
+				if err2 != nil {
+					panic(err2)
+				}
+				close(s.signalChannel)
+				os.Exit(0)
+			}
+		}
+	}()
 	return
 }
 
@@ -163,3 +201,23 @@ func (s *Server) logInfo(funcName string, msg string) {
 	logger.GetLogger().SetPrefix(fmt.Sprintf("%v%v", moduleServer, funcName)).Println(msg)
 	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix(fmt.Sprintf("%v%v", moduleServer, funcName)).Println(msg)
 }
+
+// stops a Server instance and release all retained resource(s)
+func (s *Server) Stop() (err error) {
+	logger.GetLogger().SetPrefix("server.Stop").Println("Stopping server now. Stop sequence started ...")
+	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix("server.Stop").Println("Stopping server now. Stop sequence started ...")
+
+	logger.GetLogger().SetPrefix("server.Stop").Println("Stopping cron-service now...")
+	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix("server.Stop").Println("Stopping cron-service...")
+	err = s.pCronSrv.StopCron()
+	if err != nil {
+		panic(err)
+	}
+
+	logger.GetLogger().SetPrefix("server.Stop").Println("server stopped successfully")
+	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix("server.Stop").Println("server stopped successfully")
+	_ = logger.CloseAllLoggers()
+	return
+}
+
+

@@ -235,7 +235,22 @@ func GetLogger(loggerName...string) (pLogger ILogger) {
 	return
 }
 
+func CloseAllLoggers() (err error) {
+	if pRepositoryLoggers != nil {
+		for _, pLogger := range pRepositoryLoggers.repo {
+			if pLogger != nil {
+				err2 := pLogger.Close()
+				if err2 != nil {
+					fmt.Println("unexpected error on closing logger", err2)
+					err = err2
+					// continue though
+				}
+			}
+		} // end -- for (logger repository loop)
+	}
 
+	return
+}
 
 
 

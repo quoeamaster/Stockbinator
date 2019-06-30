@@ -16,7 +16,9 @@
 package crawler
 
 import (
+	"Stockbinator/common"
 	"Stockbinator/config"
+	"Stockbinator/logger"
 	"Stockbinator/store"
 	"Stockbinator/util"
 	"encoding/json"
@@ -33,6 +35,8 @@ const (
 	aastocksKeyVolume = "volume"
 	aastocksKeyTrxDate = "trx_date"
 	aastocksKeyStockId = "stock_id"
+	// module for the logging prefix
+	moduleCrawlerAAStocks = "crawler.aastocks."
 )
 
 type StructAAStocksCrawler struct {
@@ -55,7 +59,8 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string, storeList []store.IStore
 		stockModuleConfig := s.StockModuleConfig[names[0]]
 		// SKIP weekend (use local locale time, no need UTC)
 		if util.IsWeekend(time.Now()) {
-			fmt.Println("skipped as today is weekend")
+			logger.GetLogger().SetPrefix(fmt.Sprintf("%v%v", moduleCrawlerAAStocks, "crawl")).Printf("%v, %v\n", "skipped as today is weekend", moduleKey)
+			logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix(fmt.Sprintf("%v%v", moduleCrawlerAAStocks, "crawl")).Printf("%v, %v\n", "skipped as today is weekend", moduleKey)
 			return
 		}
 		// SKIP holiday
