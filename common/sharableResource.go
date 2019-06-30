@@ -22,6 +22,15 @@ package common
 
 
 const (
+	// default folder name for storing the CONFIG files
+	ConfigDefaultFoldername = "config"
+	// default folder name for storing the LOG files
+	LogDefaultFoldername = "log"
+
+	ConfigEnvPathConfig = "config"
+	ConfigEnvPathPath = "path"
+	ConfigEnvPrefix = "SB"
+
 	// config entry / key => "holidays" (used in holiday.toml)
 	ConfigKeyHolidays = "holidays"
 
@@ -33,6 +42,16 @@ const (
 	// config entry / key => "repo" (app.toml)
 	ConfigKeyRepo = "repo"
 
+	// default logger config file -> logger.toml
+	ConfigFileLoggerToml = "logger.toml"
+	ConfigKeyLoggers = "loggers"
+	ConfigKeyFileLoggerFilename = "filename"
+	ConfigKeyFileLoggerTimebased = "timebased"
+	ConfigKeyFileLoggerTimebasePattern = "timebasePattern"
+	ConfigKeyFileLoggerFilepath = "filepath"
+	// is the logger a default; if no logger id / name specified the logger "defaulted" will be employed
+	ConfigKeyLoggerPathDefault = "default"
+
 	// store -> filestore's default file name if not provided
 	StoreDefaultDateFilename = "default.data"
 	StoreKeyDefaultDateFilename = "filestore.default.filename"
@@ -43,8 +62,13 @@ const (
 	FileStatusLocked       = 401
 	FileStatusUnknown      = 500
 
-	// filename for the file-logger
+	// filename for the file-logger (for the "Info" method)
 	LoggerFileInfoKeyFilename = "filename"
 	// full filepath for the file-logger
 	LoggerFileInfoKeyFilepath = "filepath"
+	LoggerInfoKeyLoggerName   = "name"
+	LoggerInfoKeyPrefix   = "prefix"
+
+	LoggerTypeFileLogger = "fileLogger"
+	LoggerTypeConsoleLogger = "consoleLogger"
 )

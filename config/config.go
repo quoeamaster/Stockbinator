@@ -17,12 +17,8 @@ package config
 
 import (
 	"Stockbinator/util"
-	"errors"
 	"fmt"
 	"github.com/micro/go-config"
-	"github.com/micro/go-config/source/env"
-	"github.com/micro/go-config/source/file"
-	"strings"
 )
 
 
@@ -35,7 +31,6 @@ import (
 
 
 // env variable holding the config repository's location (could be nil)
-const envConfigPath = "SB"
 const appToml = "app.toml"
 const stockModuleFolderPrefix = "stock_"
 const holidayToml = "holiday.toml"
@@ -68,27 +63,11 @@ func NewStructConfig() (*StructConfig, error) {
 // 2) if 1) is not available, use the current executable path's config folder =>
 // 	e.g. /exec/config (if exec is where the Stockbinator executable lives)
 func (s *StructConfig) LoadConfigs() (err error) {
-	repoPath := util.DefaultConfigValString
-
-	// 1) check env variable
-	cfg := config.NewConfig()
-	eSrc := env.NewSource(env.WithStrippedPrefix(envConfigPath))
-	// result should be config.path = "/abc/dev/"
-	err = cfg.Load(eSrc)
+	repoPath, err := util.GetConfigFolderPath()
 	if err != nil {
 		return
 	}
-	repoPath = cfg.Get("config", "path").String(util.DefaultConfigValString)
-	if strings.Compare(repoPath, util.DefaultConfigValString) == 0 {
-		// means no env path available, get the executable's path
-		repoPath, err = util.GetExecutablePath(true)
-		if err != nil {
-			return
-		}
-		repoPath = fmt.Sprintf("%v%v%v", repoPath, util.GetPathSeparator(), "config")
-	}
 	s.RepositoryPath = repoPath
-	// fmt.Println("** config repoPath => ", repoPath)
 
 	// 2a) load app.conf
 	err = s.loadAppConf()
@@ -103,29 +82,7 @@ func (s *StructConfig) LoadConfigs() (err error) {
 
 // load the application's config(s)
 func (s *StructConfig) loadAppConf() (err error) {
-	s.AppConfig, err = s.loadConf(fmt.Sprintf("%v%v", s.RepositoryPath, appToml))
-	return
-}
-
-func (s *StructConfig) loadConf(filePath string) (configObject config.Config, err error) {
-	//cfgPath := fmt.Sprintf("%v%v", s.RepositoryPath, filePath)
-	exists, err := util.IsFileExists(filePath)
-	if !exists {
-		err = errors.New(fmt.Sprintf("The supplied config file path DOES NOT exists => %v", filePath))
-		return
-	}
-	if err != nil {
-		return
-	}
-
-	// continue parsing
-	configObject = config.NewConfig()
-	fSrc := file.NewSource(file.WithPath(filePath))
-	err = configObject.Load(fSrc)
-	if err != nil {
-		return
-	}
-	// fmt.Println(s.AppConfig.Get("filestore", "repo").String(util.DefaultConfigValString))
+	s.AppConfig, err = util.LoadConfig(fmt.Sprintf("%v%v", s.RepositoryPath, appToml))
 	return
 }
 
@@ -158,14 +115,14 @@ func (s *StructConfig) loadStockModuleConf() (err error) {
 			return
 		}
 		// holiday.toml
-		pCfgInst.Holidays, err = s.loadConf(util.ConcatenateFilePath(modulePath, holidayToml))
+		pCfgInst.Holidays, err = util.LoadConfig(util.ConcatenateFilePath(modulePath, holidayToml))
 		if err != nil {
 			return
 		}
 		//fmt.Println( pCfgInst.Holidays.Get("2019", "holidays").StringSlice([]string{}))
 
 		// rulesToml
-		pCfgInst.Rules, err = s.loadConf(util.ConcatenateFilePath(modulePath, rulesToml))
+		pCfgInst.Rules, err = util.LoadConfig(util.ConcatenateFilePath(modulePath, rulesToml))
 		if err != nil {
 			return
 		}

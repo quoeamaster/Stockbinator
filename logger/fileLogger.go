@@ -82,14 +82,16 @@ func (l *StructFileLogger) prepareFilename(config *StructLoggerConfig) (name str
 		return
 	}
 	// if is time-based but filepattern is not provided... use the default pattern
-	finalPattern := loggerTimebasedPattern
+	finalPattern := ""
 	if config.IsFilenameTimebased && !util.IsEmptyString(config.FilenameTimebasedPattern) {
 		finalPattern = config.FilenameTimebasedPattern
+		// substitute the pattern with real date parts
+		finalPattern = util.PrepareTimebasedPatternWithGivenTime(finalPattern, time.Now())
+		// concat the filename with the pattern
+		name = fmt.Sprintf("%v-%v", config.Filename, finalPattern)
+	} else {
+		name = config.Filename
 	}
-	// substitute the pattern with real date parts
-	finalPattern = util.PrepareTimebasedPatternWithGivenTime(finalPattern, time.Now())
-	// concat the filename with the pattern
-	name = fmt.Sprintf("%v-%v", config.Filename, finalPattern)
 	return
 }
 
@@ -99,11 +101,13 @@ func (l *StructFileLogger) SetOutput(writer io.Writer) (err error) {
 	return
 }
 // implementations might update the given prefix with the actual values to substitute
-func (l *StructFileLogger) SetPrefix(prefixPattern string) {
+func (l *StructFileLogger) SetPrefix(prefixPattern string) (pLogger ILogger) {
 	if strings.Compare(strings.Trim(prefixPattern, ""), "") != 0 {
 		l.prefix = prefixPattern
 		l.isPrefixSet = true
 	}
+	pLogger = l
+	return
 }
 
 // print out values provided
@@ -160,7 +164,7 @@ func (l *StructFileLogger) Println(v... interface{}) {
 func (l *StructFileLogger) prependPrefixToLine(line string) (finalLine string) {
 	finalLine = line
 	if l.isPrefixSet {
-		finalLine = fmt.Sprintf("[%v] %v", l.prefix, line)
+		finalLine = fmt.Sprintf("[%v][%v] %v", l.prefix, time.Now().UTC().Format(util.CommonDateFormat), line)
 	}
 	return
 }
@@ -178,10 +182,12 @@ func (l *StructFileLogger) Info() (info string) {
 
 	iMap[common.LoggerFileInfoKeyFilename] = l.currentLogFilename
 	iMap[common.LoggerFileInfoKeyFilepath] = l.currentLogFilenameFullpath
+	iMap[common.LoggerInfoKeyLoggerName] = common.LoggerTypeFileLogger
+	iMap[common.LoggerInfoKeyPrefix] = l.prefix
 
 	bContents, err := json.Marshal(iMap)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	info = string(bContents)
 	return

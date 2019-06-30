@@ -16,12 +16,12 @@
 package server
 
 import (
+	"Stockbinator/common"
 	"Stockbinator/config"
+	"Stockbinator/logger"
 	"Stockbinator/webservice"
 	"errors"
 	"fmt"
-	"github.com/daviddengcn/go-colortext"
-	"github.com/daviddengcn/go-colortext/fmt"
 	"github.com/emicklei/go-restful"
 	"net/http"
 	"strconv"
@@ -160,6 +160,6 @@ func (s *Server) welcomeFunc(pReq *restful.Request, pRes *restful.Response) {
 
 // logging function for info level
 func (s *Server) logInfo(funcName string, msg string) {
-	ctfmt.Print(ct.Green, true, fmt.Sprintf("[%v%v] ", moduleServer, funcName))
-	ctfmt.Println(ct.White, true, msg)
+	logger.GetLogger().SetPrefix(fmt.Sprintf("%v%v", moduleServer, funcName)).Println(msg)
+	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix(fmt.Sprintf("%v%v", moduleServer, funcName)).Println(msg)
 }

@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6fd4884f-0e95-4587-ac27-ded56bc3c8d0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/util/configUtil.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/sharableResource.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/sharableResource.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/default.data" beforeDir="false" afterPath="$PROJECT_DIR$/config/default.data" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logger/fileLogger.go" beforeDir="false" afterPath="$PROJECT_DIR$/logger/fileLogger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/commonUtil.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/commonUtil.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logger/logFactory.go" beforeDir="false" afterPath="$PROJECT_DIR$/logger/logFactory.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,35 +20,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4245">
-              <caret line="296" selection-start-line="296" selection-end-line="296" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/store/filestore.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="810">
-              <caret line="79" column="79" selection-start-line="79" selection-start-column="79" selection-end-line="79" selection-end-column="79" />
-              <folding>
-                <element signature="n#!!block;n#NewStructFilestore#0" />
-                <element signature="n#!!block;n#ReadAll#0" />
-                <element signature="n#!!block;n#ReadByKey#0" />
-                <element signature="n#!!block;n#ModifyByKey#0" />
-                <element signature="n#!!block;n#RemoveByKey#0" />
-                <element signature="n#!!block;n#RemoveAll#0" />
-                <element signature="n#!!block;n#newStructStoreResponse#0" />
-                <element signature="n#!!block;n#handleCommonErrorForResponse#0" />
-                <element signature="n#!!block;n#toJson#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crawler/aastocksCrawler.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1560">
@@ -52,31 +29,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/logger/logFactory.go">
+        <entry file="file://$PROJECT_DIR$/server/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="61" column="24" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="24" />
+            <state relative-caret-position="798">
+              <caret line="163" column="48" selection-start-line="163" selection-start-column="48" selection-end-line="163" selection-end-column="48" />
               <folding>
-                <element signature="e#659#686#0" expanded="true" />
+                <element signature="n#!!block;n#prepareCronScheduleParams#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/logger/fileLogger.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="505">
-              <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/util/commonUtil.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="543">
-              <caret line="355" column="41" selection-start-line="355" selection-start-column="5" selection-end-line="355" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -84,8 +43,47 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common/sharableResource.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="46" column="29" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="29" />
+            <state relative-caret-position="483">
+              <caret line="51" column="104" selection-start-line="51" selection-start-column="104" selection-end-line="51" selection-end-column="104" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/config.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="304">
+              <caret line="74" column="14" selection-start-line="74" selection-start-column="14" selection-end-line="74" selection-end-column="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/logger/logFactory.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="622">
+              <caret line="182" column="27" selection-start-line="182" selection-start-column="27" selection-end-line="182" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/logger/fileLogger.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="365">
+              <caret line="166" column="104" selection-start-line="166" selection-start-column="104" selection-end-line="166" selection-end-column="104" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/logger/consoleLogger.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="331">
+              <caret line="65" column="28" selection-start-line="65" selection-start-column="28" selection-end-line="65" selection-end-column="28" />
+              <folding>
+                <element signature="e#659#681#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -117,6 +115,16 @@
       <find>instanceStructCrawlerTestObjects</find>
       <find>sharab</find>
       <find>app_t</find>
+      <find>envConfigPath</find>
+      <find>loggers</find>
+      <find>env</find>
+      <find>setpri</find>
+      <find>setpr</find>
+      <find>setPref</find>
+      <find>printpr</find>
+      <find>setPrf</find>
+      <find>print</find>
+      <find>sprefix</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/Cellar/go/1.11.4/libexec" />
@@ -146,14 +154,11 @@
         <option value="$PROJECT_DIR$/config/holidays_2018.toml" />
         <option value="$PROJECT_DIR$/util/crawlerUtil.go" />
         <option value="$PROJECT_DIR$/tests/crawlerUtil_test.go" />
-        <option value="$PROJECT_DIR$/config/config.go" />
         <option value="$PROJECT_DIR$/config/app_test.toml.go" />
-        <option value="$PROJECT_DIR$/config/app.toml" />
         <option value="$PROJECT_DIR$/tests/commonUtil_test.go" />
         <option value="$PROJECT_DIR$/config/app_test.toml" />
         <option value="$PROJECT_DIR$/tests/ioUtil_test.go" />
         <option value="$PROJECT_DIR$/util/ioUtil.go" />
-        <option value="$PROJECT_DIR$/server/server.go" />
         <option value="$PROJECT_DIR$/crawler/crawlerFactory.go" />
         <option value="$PROJECT_DIR$/crawler/aastocksCrawler.go" />
         <option value="$PROJECT_DIR$/tests/filestore_test.go" />
@@ -163,10 +168,16 @@
         <option value="$PROJECT_DIR$/store/storeResource.go" />
         <option value="$PROJECT_DIR$/store/filestore.go" />
         <option value="$PROJECT_DIR$/tests/testResources_test.go" />
-        <option value="$PROJECT_DIR$/logger/logFactory.go" />
-        <option value="$PROJECT_DIR$/common/sharableResource.go" />
         <option value="$PROJECT_DIR$/tests/fileLogger_test.go" />
         <option value="$PROJECT_DIR$/util/commonUtil.go" />
+        <option value="$PROJECT_DIR$/config/app.toml" />
+        <option value="$PROJECT_DIR$/config/logger.toml" />
+        <option value="$PROJECT_DIR$/config/config.go" />
+        <option value="$PROJECT_DIR$/util/configUtil.go" />
+        <option value="$PROJECT_DIR$/common/sharableResource.go" />
+        <option value="$PROJECT_DIR$/server/server.go" />
+        <option value="$PROJECT_DIR$/logger/logFactory.go" />
+        <option value="$PROJECT_DIR$/logger/consoleLogger.go" />
         <option value="$PROJECT_DIR$/logger/fileLogger.go" />
       </list>
     </option>
@@ -184,7 +195,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -195,22 +205,12 @@
             <path>
               <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
               <item name="Stockbinator" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Stockbinator" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Stockbinator" type="462c0819:PsiDirectoryNode" />
-              <item name="crawler" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Stockbinator" type="462c0819:PsiDirectoryNode" />
               <item name="logger" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Stockbinator" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Stockbinator" type="b2602c69:ProjectViewProjectNode" />
@@ -231,6 +231,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -264,7 +265,7 @@
     <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31196582" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31562883" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -293,23 +294,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/server/server.go</url>
-          <line>146</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/server/server.go</url>
           <line>117</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/config/config.go</url>
-          <line>93</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/config/config.go</url>
-          <line>98</line>
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/server/server.go</url>
@@ -345,6 +331,16 @@
           <url>file://$PROJECT_DIR$/crawler/aastocksCrawler.go</url>
           <line>57</line>
           <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/server/server.go</url>
+          <line>162</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/logger/logFactory.go</url>
+          <line>158</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -443,13 +439,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/app_test.toml.go" />
-    <entry file="file://$PROJECT_DIR$/config/app.toml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/commonUtil_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="768">
@@ -473,17 +462,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="303">
           <caret line="262" column="5" selection-start-line="262" selection-start-column="5" selection-end-line="262" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/server.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="122" column="26" selection-start-line="122" selection-start-column="26" selection-end-line="122" selection-end-column="26" />
-          <folding>
-            <element signature="e#659#886#0" expanded="true" />
-            <element signature="n#!!block;n#prepareCronScheduleParams#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -525,27 +503,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/config.go">
+    <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1560">
-          <caret line="104" column="23" selection-start-line="104" selection-start-column="23" selection-end-line="104" selection-end-column="23" />
-          <folding>
-            <element signature="e#659#831#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="4245">
+          <caret line="296" selection-start-line="296" selection-end-line="296" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/testResources_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
+        <state relative-caret-position="-280">
           <caret line="136" column="5" selection-start-line="136" selection-start-column="5" selection-end-line="136" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webservice/cronService.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4245">
-          <caret line="296" selection-start-line="296" selection-end-line="296" />
         </state>
       </provider>
     </entry>
@@ -567,6 +535,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/app.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/commonUtil.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/crawler/aastocksCrawler.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1560">
@@ -574,44 +556,72 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="74" column="14" selection-start-line="74" selection-start-column="14" selection-end-line="74" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tests/fileLogger_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="798">
-          <caret line="106" selection-start-line="106" selection-end-line="106" />
-          <folding>
-            <element signature="e#658#702#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-5">
+          <caret line="14" column="3" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/configUtil.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="649">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/logger.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/common/sharableResource.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="46" column="29" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="29" />
+        <state relative-caret-position="483">
+          <caret line="51" column="104" selection-start-line="51" selection-start-column="104" selection-end-line="51" selection-end-column="104" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="798">
+          <caret line="163" column="48" selection-start-line="163" selection-start-column="48" selection-end-line="163" selection-end-column="48" />
+          <folding>
+            <element signature="n#!!block;n#prepareCronScheduleParams#0" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logger/logFactory.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="61" column="24" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="24" />
-          <folding>
-            <element signature="e#659#686#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="622">
+          <caret line="182" column="27" selection-start-line="182" selection-start-column="27" selection-end-line="182" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/util/commonUtil.go">
+    <entry file="file://$PROJECT_DIR$/logger/consoleLogger.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="543">
-          <caret line="355" column="41" selection-start-line="355" selection-start-column="5" selection-end-line="355" selection-end-column="41" />
+        <state relative-caret-position="331">
+          <caret line="65" column="28" selection-start-line="65" selection-start-column="28" selection-end-line="65" selection-end-column="28" />
+          <folding>
+            <element signature="e#659#681#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logger/fileLogger.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
-          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+        <state relative-caret-position="365">
+          <caret line="166" column="104" selection-start-line="166" selection-start-column="104" selection-end-line="166" selection-end-column="104" />
         </state>
       </provider>
     </entry>
