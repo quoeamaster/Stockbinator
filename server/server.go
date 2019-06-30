@@ -214,8 +214,11 @@ func (s *Server) Stop() (err error) {
 		panic(err)
 	}
 
+	logger.GetLogger().SetPrefix("server.Stop").Println("Stopping logger-service now...")
+	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix("server.Stop").Println("Stopping logger-service now...")
 	logger.GetLogger().SetPrefix("server.Stop").Println("server stopped successfully")
 	logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix("server.Stop").Println("server stopped successfully")
+	// close all loggers after the last logging message
 	_ = logger.CloseAllLoggers()
 	return
 }

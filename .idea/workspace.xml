@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6fd4884f-0e95-4587-ac27-ded56bc3c8d0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/crawler/aastocksCrawler.go" beforeDir="false" afterPath="$PROJECT_DIR$/crawler/aastocksCrawler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger/logFactory.go" beforeDir="false" afterPath="$PROJECT_DIR$/logger/logFactory.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,8 +24,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="605">
-              <caret line="209" column="85" selection-start-line="209" selection-start-column="85" selection-end-line="209" selection-end-column="85" />
+            <state relative-caret-position="725">
+              <caret line="217" column="116" selection-start-line="217" selection-start-column="116" selection-end-line="217" selection-end-column="116" />
               <folding>
                 <element signature="n#!!block;n#prepareCronScheduleParams#0" />
               </folding>
@@ -547,13 +545,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logger/logFactory.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="723">
-          <caret line="248" column="47" selection-start-line="248" selection-start-column="47" selection-end-line="248" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crawler/crawlerFactory.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="483">
@@ -568,10 +559,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/logger/logFactory.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="723">
+          <caret line="248" column="47" selection-start-line="248" selection-start-column="47" selection-end-line="248" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="605">
-          <caret line="209" column="85" selection-start-line="209" selection-start-column="85" selection-end-line="209" selection-end-column="85" />
+        <state relative-caret-position="725">
+          <caret line="217" column="116" selection-start-line="217" selection-start-column="116" selection-end-line="217" selection-end-column="116" />
           <folding>
             <element signature="n#!!block;n#prepareCronScheduleParams#0" />
           </folding>
