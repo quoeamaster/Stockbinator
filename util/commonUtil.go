@@ -307,6 +307,7 @@ func IsHoliday(date *time.Time, dateInString *string, holidays []string) (isHoli
 	var targetDate time.Time
 	if date == nil && dateInString == nil {
 		err = errors.New("both date and dateInstring parameter is invalid => nil\n")
+		return
 	} else if dateInString != nil {
 		targetDate, err = time.Parse(CommonDateFormat, *dateInString)
 		if err != nil {
@@ -315,7 +316,8 @@ func IsHoliday(date *time.Time, dateInString *string, holidays []string) (isHoli
 	} else {
 		targetDate = *date
 	}
-	targetDate = targetDate.UTC()
+	// truncate / trim to date level for comparison
+	targetDate = targetDate.UTC().Truncate(time.Hour * 24)
 
 	// check against the holiday[]
 	if holidays == nil || len(holidays) == 0 {
@@ -328,7 +330,7 @@ func IsHoliday(date *time.Time, dateInString *string, holidays []string) (isHoli
 			err = err2
 			return
 		}
-		hDate = hDate.UTC()
+		hDate = hDate.UTC().Truncate(time.Hour * 24)
 		// compare
 		// a) same = holiday (return true)
 		// b) different, but hDate is already after the targetDate which this is a FUTURE holiday

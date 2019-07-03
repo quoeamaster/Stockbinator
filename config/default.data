@@ -1,4 +1,4 @@
-{"trx_date": "2019-06-30T12:00:00+08:00", "stock_id": "700_tencent", "price": 50, "price_fluctuation": "35-65", "volume": "500 Million" }
-{"price_fluctuation": "85-115", "volume": "1000 Million", "trx_date": "2019-07-01T12:00:00+08:00", "stock_id": "700_tencent", "price": 100 }
-{"price": 150, "price_fluctuation": "135-165", "volume": "1500 Million", "trx_date": "2019-07-02T12:00:00+08:00", "stock_id": "700_tencent" }
-{"stock_id": "700_tencent", "price": 200, "price_fluctuation": "185-215", "volume": "2000 Million", "trx_date": "2019-07-03T12:00:00+08:00" }
+{"price": 50, "price_fluctuation": "35-65", "volume": "500 Million", "trx_date": "2019-07-03T12:00:00+08:00", "stock_id": "700_tencent" }
+{"trx_date": "2019-07-04T12:00:00+08:00", "stock_id": "700_tencent", "price": 100, "price_fluctuation": "85-115", "volume": "1000 Million" }
+{"price": 150, "price_fluctuation": "135-165", "volume": "1500 Million", "trx_date": "2019-07-05T12:00:00+08:00", "stock_id": "700_tencent" }
+{"stock_id": "700_tencent", "price": 200, "price_fluctuation": "185-215", "volume": "2000 Million", "trx_date": "2019-07-06T12:00:00+08:00" }

@@ -74,7 +74,8 @@ func (s *StructAAStocksCrawler) Crawl(moduleKey string, storeList []store.IStore
 		now := time.Now()
 		isHoliday, err2 := util.IsHoliday(&now, nil, holidaySlice)
 		if isHoliday {
-			fmt.Println("skipped as today is holiday")
+			logger.GetLogger().SetPrefix(fmt.Sprintf("%v%v", moduleCrawlerAAStocks, "crawl")).Printf("%v, %v\n", "skipped as today is a holiday", moduleKey)
+			logger.GetLogger(common.LoggerTypeFileLogger).SetPrefix(fmt.Sprintf("%v%v", moduleCrawlerAAStocks, "crawl")).Printf("%v, %v\n", "skipped as today is a holiday", moduleKey)
 			return
 		}
 
@@ -151,6 +152,7 @@ func (s *StructAAStocksCrawler) crawlForMetrics(content string) (price, priceFlu
 }
 
 type structAAStocksFeed struct {
+	// till 2019-06-30, format for the stocks query api
 	// a sample => [{"a": "330.000", "b": "<span class='neg'>-4.200(1.257%)</span>", "c": "329.200-336.800", "d": "46.61億", "e": "2019/06/14 16:08"}]
 	Price string `json:"a"`
 	PriceFluctuation string `json:"c"`
